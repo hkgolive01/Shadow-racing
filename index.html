@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Shadow Racing</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=sans-serif:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
 
         body {
             background-color: #050505;
@@ -20,8 +20,7 @@
         }
 
         #ui-bar {
-            /* 高度縮減，因為技能與等級併排了 */
-            height: 110px;
+            height: 130px;
             background: #0b0b0b;
             border-bottom: 2px solid #333;
             display: flex;
@@ -41,7 +40,7 @@
         }
 
         #timer-display {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 70px;
             color: #fff;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
@@ -56,7 +55,7 @@
             display: flex;
             flex-direction: column;
             width: 380px;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             position: relative;
             transition: color 0.3s, border-color 0.3s;
         }
@@ -76,7 +75,7 @@
             background: transparent;
             border: 1px solid transparent;
             color: inherit;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 20px;
             font-weight: bold;
             width: 180px;
@@ -185,7 +184,7 @@
         }
 
         h1 {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 64px;
             background: linear-gradient(to right, #2ecc71, #f1c40f);
             -webkit-background-clip: text;
@@ -207,14 +206,14 @@
             text-align: left;
         }
 
-        .rule-title { color: #f1c40f; font-weight: bold; font-size: 20px; margin-bottom: 10px; font-family: 'Orbitron'; border-bottom: 1px solid #444; padding-bottom: 5px;}
+        .rule-title { color: #f1c40f; font-weight: bold; font-size: 20px; margin-bottom: 10px; font-family: 'sans-serif'; border-bottom: 1px solid #444; padding-bottom: 5px;}
         .rule-row { display: flex; margin-bottom: 10px; align-items: center; }
         .icon { width: 40px; font-size: 24px; text-align: center; margin-right: 15px; }
         .desc { color: #ccc; font-size: 16px; line-height: 1.4; }
 
         /* --- 結算表樣式 --- */
         .result-header { text-align: center; margin-bottom: 30px; }
-        .winner-announce { font-size: 48px; font-weight: bold; font-family: 'Orbitron'; margin-bottom: 10px; text-shadow: 0 0 20px currentColor; }
+        .winner-announce { font-size: 48px; font-weight: bold; font-family: 'sans-serif'; margin-bottom: 10px; text-shadow: 0 0 20px currentColor; }
         .reason-text { color: #888; font-size: 18px; margin-bottom: 20px; font-style: italic; }
 
         .stat-grid {
@@ -247,7 +246,7 @@
         }
         
         .p1-val, .p2-val { 
-            font-family: 'Orbitron'; 
+            font-family: 'sans-serif'; 
             font-weight: bold; 
             text-align: center;
             font-size: 18px;
@@ -255,7 +254,7 @@
         
         .level-row { padding: 15px 0; border-bottom: 2px solid #444; margin-bottom: 10px; }
         .level-row .p1-val, .level-row .p2-val { font-size: 3.5rem; text-shadow: 0 0 15px currentColor; }
-        .level-row .stat-label { font-size: 1.5rem; color: #fff; font-weight: bold; font-family: 'Orbitron'; }
+        .level-row .stat-label { font-size: 1.5rem; color: #fff; font-weight: bold; font-family: 'sans-serif'; }
 
         .total-row { border-top: 2px solid #555; border-bottom: none; margin-top: 15px; padding-top: 20px; }
         .total-row .stat-label, .total-row .p1-val, .total-row .p2-val { font-size: 20px; }
@@ -266,7 +265,7 @@
             margin-top: 30px;
             padding: 15px 60px;
             font-size: 24px;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background: transparent;
             color: #2ecc71;
             border: 2px solid #2ecc71;
@@ -591,19 +590,25 @@
             el.timeout = setTimeout(() => { el.style.opacity = '0'; }, 1500);
         }
 
-        function resize() {
-            // 注意：因為 canvas 有 border，container 的 clientWidth 包含 border 需要小心
-            // 這裡我們讓 canvas 寬高填滿 container 減去 padding
-            let style = window.getComputedStyle(container);
-            let padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-            let padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-            
-            canvas.width = container.clientWidth - padX;
-            canvas.height = container.clientHeight - padY;
+function resize() {
+            const container = document.getElementById('game-area');
+            // 預留一些邊距
+            let padX = 40; 
+            let padY = 40;
+
+            // 1. 先取得容器可用的最大空間
+            let availW = container.clientWidth - padX;
+            let availH = container.clientHeight - padY;
+
+            // 2. 計算能放下的最大格子數 (整數)
+            GRID_W = Math.floor(availW / CELL_SIZE);
+            GRID_H = Math.floor(availH / CELL_SIZE);
+
+            // 3. 【關鍵修改】反過來設定 Canvas 大小，使其剛好等於格子總寬高
+            canvas.width = GRID_W * CELL_SIZE;
+            canvas.height = GRID_H * CELL_SIZE;
             shadowCanvas.width = canvas.width;
             shadowCanvas.height = canvas.height;
-            GRID_W = Math.floor(canvas.width / CELL_SIZE);
-            GRID_H = Math.floor(canvas.height / CELL_SIZE);
         }
 
         function getSafePos() {
@@ -757,15 +762,28 @@
             });
         }
 
-        function drawGrid() {
+  function drawGrid() {
             ctx.strokeStyle = COMMON_COLORS.grid;
             ctx.lineWidth = 1;
             ctx.beginPath();
-            for (let x = 0; x <= GRID_W; x++) { ctx.moveTo(x * CELL_SIZE, 0); ctx.lineTo(x * CELL_SIZE, canvas.height); }
-            for (let y = 0; y <= GRID_H; y++) { ctx.moveTo(0, y * CELL_SIZE); ctx.lineTo(canvas.width, y * CELL_SIZE); }
+            
+            // 垂直線
+            for (let x = 0; x <= GRID_W; x++) {
+                ctx.moveTo(x * CELL_SIZE, 0);
+                ctx.lineTo(x * CELL_SIZE, canvas.height);
+            }
+            // 水平線
+            for (let y = 0; y <= GRID_H; y++) {
+                ctx.moveTo(0, y * CELL_SIZE);
+                ctx.lineTo(canvas.width, y * CELL_SIZE);
+            }
             ctx.stroke();
+            
+            // 如果您覺得 CSS 的邊框還不夠明顯，才保留下面這段，否則可以刪除
+            // ctx.strokeStyle = '#333';
+            // ctx.lineWidth = 2;
+            // ctx.strokeRect(0, 0, canvas.width, canvas.height);
         }
-
         function drawShadowLayer() {
             shadowCtx.clearRect(0, 0, canvas.width, canvas.height);
             shadowCtx.globalCompositeOperation = 'source-over';
