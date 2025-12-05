@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Shadow Racing</title>
+    <title>Shadow Racing - Ultimate Chaos</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=sans-serif:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
 
@@ -20,14 +20,14 @@
         }
 
         #ui-bar {
-            height: 130px;
+            height: 140px;
             background: #0b0b0b;
             border-bottom: 2px solid #333;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             padding: 10px 30px 0 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.9);
             z-index: 10;
             flex-shrink: 0;
             overflow: hidden;
@@ -48,7 +48,10 @@
         }
 
         .timer-label {
-            font-size: 14px; color: #666; letter-spacing: 2px; margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+            letter-spacing: 2px;
+            margin-top: 5px;
         }
 
         .player-info {
@@ -60,16 +63,29 @@
             transition: color 0.3s, border-color 0.3s;
         }
 
-        .p1-info { border-left: 4px solid; padding-left: 20px; }
-        .p2-info { border-right: 4px solid; padding-right: 20px; text-align: right; align-items: flex-end; }
-        
+        .p1-info {
+            border-left: 4px solid;
+            padding-left: 20px;
+        }
+
+        .p2-info {
+            border-right: 4px solid;
+            padding-right: 20px;
+            text-align: right;
+            align-items: flex-end;
+        }
+
         .input-group {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 2px;
+            flex-wrap: wrap;
         }
-        .p2-info .input-group { flex-direction: row-reverse; }
+
+        .p2-info .input-group {
+            flex-direction: row-reverse;
+        }
 
         .name-input {
             background: transparent;
@@ -84,9 +100,21 @@
             outline: none;
             transition: 0.2s;
         }
-        .name-input:hover { border-color: #333; cursor: pointer; }
-        .name-input:focus { border-color: #fff; background: #222; cursor: text; }
-        .p2-info .name-input { text-align: right; }
+
+        .name-input:hover {
+            border-color: #333;
+            cursor: pointer;
+        }
+
+        .name-input:focus {
+            border-color: #fff;
+            background: #222;
+            cursor: text;
+        }
+
+        .p2-info .name-input {
+            text-align: right;
+        }
 
         .color-picker {
             -webkit-appearance: none;
@@ -97,17 +125,27 @@
             background: none;
             padding: 0;
         }
-        .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-        .color-picker::-webkit-color-swatch { border: 2px solid #555; border-radius: 50%; }
 
-        /* --- 併排數據顯示區 --- */
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .color-picker::-webkit-color-swatch {
+            border: 2px solid #555;
+            border-radius: 50%;
+        }
+
+        /* --- 數據顯示區 --- */
         .stats-row-composite {
             display: flex;
             align-items: baseline;
-            gap: 25px; /* 兩個數據之間的間距 */
+            gap: 25px;
             margin-top: -5px;
         }
-        .p2-info .stats-row-composite { flex-direction: row-reverse; }
+
+        .p2-info .stats-row-composite {
+            flex-direction: row-reverse;
+        }
 
         .big-stat {
             display: flex;
@@ -115,15 +153,39 @@
             gap: 5px;
         }
 
-        .stat-label { font-size: 14px; color: #666; font-weight: bold; }
-        .stat-val { font-size: 48px; font-weight: 900; line-height: 1; }
-        
-        /* 技能數字特別顏色 */
-        .skill-val {font-size: 32px; color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.2); }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
 
-        .bar-bg { width: 100%; height: 8px; background: #333; margin-top: 5px; border-radius: 4px; overflow: hidden; position: relative;}
-        .xp-bar { height: 100%; transition: width 0.2s; }
-        
+        .stat-val {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .skill-val {
+            font-size: 32px;
+            color: #f1c40f;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.2);
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            margin-top: 5px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-bar {
+            height: 100%;
+            transition: width 0.2s;
+        }
+
         .player-msg {
             height: 20px;
             margin-top: 4px;
@@ -134,19 +196,59 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        
-        .blind-badge {
-            background: #fff;
-            color: #000;
+
+        /* 狀態標籤 */
+        .status-badge {
             padding: 1px 4px;
             border-radius: 2px;
             font-size: 10px;
             font-weight: bold;
-            box-shadow: 0 0 10px #fff;
-            animation: flash 0.5s infinite;
+            box-shadow: 0 0 5px currentColor;
             display: inline-block;
+            margin: 0 2px;
         }
-        @keyframes flash { 0% {opacity:1;} 50% {opacity:0.5;} 100% {opacity:1;} }
+
+        .blind-badge {
+            background: #fff;
+            color: #000;
+            animation: flash 0.5s infinite;
+        }
+
+        .boost-badge {
+            background: #0055ff;
+            color: #fff;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 10px #0055ff;
+            animation: pulse-blue 1s infinite;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-blue {
+            0% {
+                box-shadow: 0 0 5px #0055ff;
+            }
+
+            50% {
+                box-shadow: 0 0 15px #00ffff;
+            }
+
+            100% {
+                box-shadow: 0 0 5px #0055ff;
+            }
+        }
 
         /* --- GAME AREA --- */
         #game-area {
@@ -158,22 +260,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* 給邊框留一點空間 */
-            box-sizing: border-box; 
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         canvas {
             display: block;
-            background-color: #111; 
-            /* 新增：明顯的邊框，區分戰場與背景 */
-            border: 3px solid #444; 
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            background-color: #111;
+            border: 3px solid #444;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
         /* --- OVERLAY SCREENS --- */
         #overlay-screen {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(5, 5, 5, 0.97);
             display: flex;
             flex-direction: column;
@@ -181,6 +285,14 @@
             align-items: center;
             z-index: 100;
             transition: opacity 0.3s;
+        }
+
+        #start-content,
+        #end-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
 
         h1 {
@@ -204,17 +316,60 @@
             max-width: 950px;
             width: 90%;
             text-align: left;
+            max-height: 80vh;
+            /* 避免表格太長超出 */
+            overflow-y: auto;
         }
 
-        .rule-title { color: #f1c40f; font-weight: bold; font-size: 20px; margin-bottom: 10px; font-family: 'sans-serif'; border-bottom: 1px solid #444; padding-bottom: 5px;}
-        .rule-row { display: flex; margin-bottom: 10px; align-items: center; }
-        .icon { width: 40px; font-size: 24px; text-align: center; margin-right: 15px; }
-        .desc { color: #ccc; font-size: 16px; line-height: 1.4; }
+        .rule-title {
+            color: #f1c40f;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-family: 'sans-serif';
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        .rule-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .icon {
+            width: 40px;
+            font-size: 24px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .desc {
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.4;
+        }
 
         /* --- 結算表樣式 --- */
-        .result-header { text-align: center; margin-bottom: 30px; }
-        .winner-announce { font-size: 48px; font-weight: bold; font-family: 'sans-serif'; margin-bottom: 10px; text-shadow: 0 0 20px currentColor; }
-        .reason-text { color: #888; font-size: 18px; margin-bottom: 20px; font-style: italic; }
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .winner-announce {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: 'sans-serif';
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .reason-text {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
 
         .stat-grid {
             display: flex;
@@ -225,44 +380,78 @@
 
         .stat-row {
             display: grid;
-            grid-template-columns: 1fr 180px 1fr;
+            grid-template-columns: 1fr 200px 1fr;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 0;
+            padding: 6px 0;
             transition: background 0.2s;
         }
-        
-        .stat-row:hover { background: rgba(255, 255, 255, 0.02); }
 
-        .stat-label { 
-            color: #888; 
-            text-align: center; 
-            font-size: 16px;
+        .stat-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-label {
+            color: #888;
+            text-align: center;
+            font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             white-space: nowrap;
         }
-        
-        .p1-val, .p2-val { 
-            font-family: 'sans-serif'; 
-            font-weight: bold; 
+
+        .p1-val,
+        .p2-val {
+            font-family: 'sans-serif';
+            font-weight: bold;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
         }
-        
-        .level-row { padding: 15px 0; border-bottom: 2px solid #444; margin-bottom: 10px; }
-        .level-row .p1-val, .level-row .p2-val { font-size: 3.5rem; text-shadow: 0 0 15px currentColor; }
-        .level-row .stat-label { font-size: 1.5rem; color: #fff; font-weight: bold; font-family: 'sans-serif'; }
 
-        .total-row { border-top: 2px solid #555; border-bottom: none; margin-top: 15px; padding-top: 20px; }
-        .total-row .stat-label, .total-row .p1-val, .total-row .p2-val { font-size: 20px; }
+        .level-row {
+            padding: 10px 0;
+            border-bottom: 2px solid #444;
+            margin-bottom: 10px;
+        }
 
-        .item-dot { width: 12px; height: 12px; display: inline-block; border-radius: 50%; }
+        .level-row .p1-val,
+        .level-row .p2-val {
+            font-size: 3rem;
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        .level-row .stat-label {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: bold;
+            font-family: 'sans-serif';
+        }
+
+        .total-row {
+            border-top: 2px solid #555;
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .total-row .stat-label,
+        .total-row .p1-val,
+        .total-row .p2-val {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .item-dot {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            border-radius: 50%;
+        }
 
         .btn {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 15px 60px;
             font-size: 24px;
             font-family: 'Roboto', sans-serif;
@@ -273,10 +462,48 @@
             transition: 0.2s;
             animation: pulse 2s infinite;
         }
-        .btn:hover { background: #2ecc71; color: #000; box-shadow: 0 0 30px #2ecc71; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-        
-        .hidden { display: none !important; }
+
+        .btn:hover {
+            background: #2ecc71;
+            color: #000;
+            box-shadow: 0 0 30px #2ecc71;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 
@@ -287,9 +514,10 @@
             <div class="input-group">
                 <input type="text" id="p1-name-in" value="PLAYER 1" class="name-input" maxlength="12">
                 <input type="color" id="p1-color-in" value="#3498db" class="color-picker">
-                <span id="p1-blind-tag" class="blind-badge hidden">BLINDED</span>
+                <span id="p1-blind-tag" class="status-badge blind-badge hidden">BLINDED</span>
+                <span id="p1-boost-tag" class="status-badge boost-badge hidden">XP BOOST</span>
             </div>
-            
+
             <div class="stats-row-composite">
                 <div class="big-stat">
                     <span class="stat-label">LV</span>
@@ -301,7 +529,9 @@
                 </div>
             </div>
 
-            <div class="bar-bg"><div id="p1-bar" class="xp-bar" style="width:0%"></div></div>
+            <div class="bar-bg">
+                <div id="p1-bar" class="xp-bar" style="width:0%"></div>
+            </div>
             <div id="p1-msg" class="player-msg"></div>
         </div>
 
@@ -314,7 +544,8 @@
             <div class="input-group">
                 <input type="text" id="p2-name-in" value="PLAYER 2" class="name-input" maxlength="12">
                 <input type="color" id="p2-color-in" value="#e74c3c" class="color-picker">
-                <span id="p2-blind-tag" class="blind-badge hidden">BLINDED</span>
+                <span id="p2-blind-tag" class="status-badge blind-badge hidden">BLINDED</span>
+                <span id="p2-boost-tag" class="status-badge boost-badge hidden">XP BOOST</span>
             </div>
 
             <div class="stats-row-composite">
@@ -328,32 +559,38 @@
                 </div>
             </div>
 
-            <div class="bar-bg"><div id="p2-bar" class="xp-bar" style="width:0%"></div></div>
+            <div class="bar-bg">
+                <div id="p2-bar" class="xp-bar" style="width:0%"></div>
+            </div>
             <div id="p2-msg" class="player-msg"></div>
         </div>
     </div>
 
     <div id="game-area">
         <canvas id="gameCanvas"></canvas>
-        
+
         <div id="overlay-screen">
             <div id="start-content">
                 <h1>Shadow Racing</h1>
                 <div class="content-box">
-                    <div class="rule-title">遊戲規則</div>
-                    <div class="rule-row"><span class="icon">🔢</span><span class="desc">吃掉數字增加經驗。<strong>每升一級，視野增加，同時移動速度提升 10%！</strong></span></div>
-                    <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span class="desc">吃掉 <strong style="color:red">Q</strong> 增加技能使用次數。</span></div>
-                    <div class="rule-row"><span class="icon">⚡</span><span class="desc"><strong>致盲：</strong> 使對手視野剩 30% (3秒)。</span></div>
-                           
-                    <div class="rule-title" style="margin-top:15px">操作與勝利條件</div>
-                    <div class="rule-row"><span class="icon" style="color:#3498db">P1</span><span class="desc"><strong>W A S D</strong> 移動。 <strong>Q 鍵</strong>：致盲對手。</span></div>
-                    <div class="rule-row"><span class="icon" style="color:#e74c3c">P2</span><span class="desc"><strong>方向鍵</strong> 移動。 <strong>Enter 鍵</strong>：致盲對手。</span></div>
-                    <div class="rule-row"><span class="icon">🏆</span><span class="desc">判定順序：<strong>等級高</strong> > <strong>經驗多</strong> > <strong>距離長</strong></span></div>
-                 
-                    <div class="rule-title" style="margin-top:15px">設定</div>
-                    <div class="rule-row"><span class="icon">🎨</span><span class="desc">點擊頂部玩家名稱可修改名字，點擊色塊可修改顏色。</span></div>
+                    <div class="rule-title">道具與規則</div>
+                    <div class="rule-row"><span class="icon">🔢</span><span
+                            class="desc">吃掉數字增加經驗。<strong>每升一級，視野增加，移動速度提升！</strong></span></div>
+                    <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span
+                            class="desc">獲得致盲技能 (對手視野剩 40% / 3秒)。</span></div>
+                    <div class="rule-row"><span class="icon"
+                            style="color:#00ffff; font-weight:bold; text-shadow:0 0 5px #0055ff">E</span><span
+                            class="desc"><strong>XP BOOST：</strong> 獲得額外 50% 經驗值 (持續 5 秒)。</span></div>
+                    <div class="rule-row"><span class="icon" style="font-size:20px">🔄</span><span
+                            class="desc"><strong>混亂對手：</strong> 讓對手<strong>強制 90 度轉向</strong> (隨機)。</span></div>
+
+                    <div class="rule-title" style="margin-top:15px">操作</div>
+                    <div class="rule-row"><span class="icon" style="color:#3498db">P1</span><span class="desc"><strong>W
+                                A S D</strong> 移動。 <strong>Q 鍵</strong>：致盲。</span></div>
+                    <div class="rule-row"><span class="icon" style="color:#e74c3c">P2</span><span
+                            class="desc"><strong>方向鍵</strong> 移動。 <strong>Enter 鍵</strong>：致盲。</span></div>
                 </div>
-                <div style="text-align:center"><button class="btn" onclick="startGame()">START GAME</button></div>
+                <div style="text-align:center"><button class="btn" onclick="startGame()">START GAME (Enter)</button></div>
             </div>
 
             <div id="end-content" class="hidden">
@@ -361,12 +598,12 @@
                     <div id="winner-title" class="winner-announce">PLAYER 1 WINS!</div>
                     <div id="win-reason" class="reason-text">Higher Level</div>
                 </div>
-                
+
                 <div class="content-box">
                     <div class="stat-grid" id="stat-table">
-                        </div>
+                    </div>
                 </div>
-                
+
                 <div style="text-align:center">
                     <button class="btn" onclick="location.reload()">RESTART (R)</button>
                 </div>
@@ -377,32 +614,33 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const container = document.getElementById('game-area');
         const shadowCanvas = document.createElement('canvas');
         const shadowCtx = shadowCanvas.getContext('2d');
 
         // --- 配置 ---
         const CELL_SIZE = 30;
         let GRID_W, GRID_H;
-        
-        const SPEED_BASE_THRESHOLD = 80; 
-        const SPEED_INCREASE_FACTOR = 1.1; 
 
-        const GAME_DURATION = 90; 
-        const BLIND_DURATION = 3.0; 
-        const VISION_BASE_DIST = 5.0; 
-        const VISION_BASE_ANGLE = 90; 
-        const VISION_PER_LV_DIST = 0.5; 
-        const VISION_PER_LV_ANGLE = 10; 
-        const BLIND_FACTOR = 0.3;
+        const SPEED_BASE_THRESHOLD = 80;
+        const SPEED_INCREASE_FACTOR = 1.05;
 
-        // 顏色管理 (初始值)
+        const GAME_DURATION = 90;
+        const BLIND_DURATION = 3.0;
+        const VISION_BASE_DIST = 5.5;
+        const VISION_BASE_ANGLE = 80;
+        const VISION_PER_LV_DIST = 0.6;
+        const VISION_PER_LV_ANGLE = 8;
+        const BLIND_FACTOR = 0.4;
+
+        // 顏色管理
         let P1_COLOR = '#3498db';
         let P2_COLOR = '#e74c3c';
 
         const ITEM_COLORS = {
-            xp5: '#95a5a6', xp15: '#2ecc71', xp20: '#3498db', xp30: '#9b59b6', xp50: '#f1c40f', 
-            skillQ: '#ff0000' 
+            xp5: '#95a5a6', xp15: '#2ecc71', xp20: '#3498db', xp30: '#9b59b6', xp99: '#f1c40f',
+            skillQ: '#ff0000',
+            buffE: '#00ffff',
+            chaos: '#d35400'
         };
 
         const COMMON_COLORS = { bg: '#111', grid: '#1a1a1a', shadow: '#000000' };
@@ -412,19 +650,24 @@
         let timeLeft = GAME_DURATION;
         let isGameOver = false;
         let snakes = [];
-        let items = []; 
-        let pendingSpawns = []; 
+        let items = [];
+        let pendingSpawns = [];
 
         const ITEM_CONFIG = [
-            { id: 'xp5',  val: 5,  count: 40, color: ITEM_COLORS.xp5,  isSkill: false, delay: 0 },
-            { id: 'xp15', val: 15, count: 20, color: ITEM_COLORS.xp15, isSkill: false, delay: 0 },
-            { id: 'xp20', val: 20, count: 10, color: ITEM_COLORS.xp20, isSkill: false, delay: 0 },
-            { id: 'xp30', val: 30, count: 5,  color: ITEM_COLORS.xp30, isSkill: false, delay: 0 },
-            { id: 'xp50', val: 50, count: 1,  color: ITEM_COLORS.xp50, isSkill: false, delay: 0 },
-            { id: 'skill',val: 0,  count: 1,  color: ITEM_COLORS.skillQ, isSkill: true, delay: 2.0 } 
+            { id: 'xp5', val: 5, count: 60, color: ITEM_COLORS.xp5, type: 'xp', delay: 0 },
+            { id: 'xp15', val: 15, count: 20, color: ITEM_COLORS.xp15, type: 'xp', delay: 0 },
+            { id: 'xp20', val: 20, count: 10, color: ITEM_COLORS.xp20, type: 'xp', delay: 0 },
+            { id: 'xp30', val: 30, count: 5, color: ITEM_COLORS.xp30, type: 'xp', delay: 0 },
+            { id: 'xp99', val: 99, count: 1, color: ITEM_COLORS.xp99, type: 'xp', delay: 0 },
+            { id: 'skill', val: 0, count: 1, color: ITEM_COLORS.skillQ, type: 'skill', delay: 0 },
+            { id: 'buffE', val: 0, count: 1, color: ITEM_COLORS.buffE, type: 'buffE', delay: 0 },
+            { id: 'chaos', val: 0, count: 1, color: ITEM_COLORS.chaos, type: 'chaos', delay: 0 }
         ];
 
-        // --- UI 更新監聽 ---
+        function getItemConfig(id) {
+            return ITEM_CONFIG.find(c => c.id === id);
+        }
+
         const p1NameIn = document.getElementById('p1-name-in');
         const p2NameIn = document.getElementById('p2-name-in');
         const p1ColorIn = document.getElementById('p1-color-in');
@@ -433,24 +676,21 @@
         function updatePanelStyles() {
             P1_COLOR = p1ColorIn.value;
             P2_COLOR = p2ColorIn.value;
-            
+
             document.querySelector('.p1-info').style.borderColor = P1_COLOR;
             document.querySelector('.p1-info').style.color = P1_COLOR;
             document.getElementById('p1-msg').style.color = P1_COLOR;
-            
+
             document.querySelector('.p2-info').style.borderColor = P2_COLOR;
             document.querySelector('.p2-info').style.color = P2_COLOR;
             document.getElementById('p2-msg').style.color = P2_COLOR;
 
-            // 更新XP條顏色
             document.getElementById('p1-bar').style.backgroundColor = P1_COLOR;
             document.getElementById('p2-bar').style.backgroundColor = P2_COLOR;
         }
 
         p1ColorIn.addEventListener('input', updatePanelStyles);
         p2ColorIn.addEventListener('input', updatePanelStyles);
-        
-        // 初始套用一次
         updatePanelStyles();
 
         class Snake {
@@ -458,48 +698,71 @@
                 this.id = id;
                 this.name = name;
                 this.color = color;
-                this.body = [{x, y}];
-                this.dir = {x: dirX, y: dirY}; 
-                this.nextDir = {x: dirX, y: dirY};
-                
-                this.xp = 0;
-                this.maxXp = 100; 
-                this.level = 1;
-                
-                this.moveAcc = 0;
-                this.currentSpeedThreshold = SPEED_BASE_THRESHOLD; 
-                
-                this.skillCharges = 0; 
-                this.blindTimer = 0;   
-                this.deadTimer = 0; 
+                this.body = [{ x, y }];
+                this.dir = { x: dirX, y: dirY };
+                this.nextDir = { x: dirX, y: dirY };
 
+                this.xp = 0;
+                this.maxXp = 100;
+                this.level = 1;
+
+                this.moveAcc = 0;
+                this.currentSpeedThreshold = SPEED_BASE_THRESHOLD;
+
+                this.skillCharges = 0;
+                this.blindTimer = 0;
+                this.deadTimer = 0;
+
+                this.xpBoostTimer = 0;
+                this.xpMultiplier = 1.0;
+
+                // 初始化所有可能的道具統計
                 this.stats = {
                     totalDist: 0,
-                    items: { xp5: 0, xp15: 0, xp20: 0, xp30: 0, xp50: 0, skill: 0 }
+                    items: {
+                        xp5: 0, xp15: 0, xp20: 0, xp30: 0, xp99: 0,
+                        skill: 0, buffE: 0, chaos: 0
+                    }
                 };
             }
 
             respawn() {
                 this.deadTimer = 2.0;
-                this.body = [{x: -999, y: -999}]; 
+                this.body = [{ x: -999, y: -999 }];
+                this.xpBoostTimer = 0;
+                this.xpMultiplier = 1.0;
                 showMsg(this.id, "CRASHED!");
             }
 
             resetToMap() {
                 let centerY = Math.floor(GRID_H / 2);
                 if (this.id === 1) {
-                    this.body = [{x: 3, y: centerY}];
-                    this.dir = {x: 1, y: 0}; 
-                    this.nextDir = {x: 1, y: 0};
+                    this.body = [{ x: 3, y: centerY }];
+                    this.dir = { x: 1, y: 0 };
+                    this.nextDir = { x: 1, y: 0 };
                 } else {
-                    this.body = [{x: GRID_W - 4, y: centerY}];
-                    this.dir = {x: -1, y: 0}; 
-                    this.nextDir = {x: -1, y: 0};
+                    this.body = [{ x: GRID_W - 4, y: centerY }];
+                    this.dir = { x: -1, y: 0 };
+                    this.nextDir = { x: -1, y: 0 };
                 }
             }
 
             applyBlind() {
                 this.blindTimer = BLIND_DURATION;
+            }
+
+            forceTurn() {
+                let newX = 0, newY = 0;
+                let randomSign = Math.random() < 0.5 ? 1 : -1;
+
+                if (this.dir.x !== 0) {
+                    newX = 0; newY = randomSign;
+                } else {
+                    newX = randomSign; newY = 0;
+                }
+
+                this.nextDir = { x: newX, y: newY };
+                this.dir = { x: newX, y: newY };
             }
 
             update(dt) {
@@ -508,7 +771,19 @@
                     if (this.deadTimer <= 0) this.resetToMap();
                     return;
                 }
+
                 if (this.blindTimer > 0) this.blindTimer -= dt;
+
+                if (this.xpBoostTimer > 0) {
+                    this.xpBoostTimer -= dt;
+                    if (this.xpBoostTimer <= 0) {
+                        this.xpBoostTimer = 0;
+                        this.xpMultiplier = 1.0;
+                        showMsg(this.id, "BOOST END");
+                        // 移除此處的 spawnItemImmediate，改由吃到時立即重生
+                    }
+                }
+
                 this.moveAcc += dt * 1000;
                 if (this.moveAcc >= this.currentSpeedThreshold) {
                     this.moveAcc = 0;
@@ -528,31 +803,44 @@
                 if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
                     this.respawn(); return;
                 }
-                
-                // 自撞檢測
-                for(let i = 1; i < this.body.length; i++) {
+
+                for (let i = 1; i < this.body.length; i++) {
                     if (nx === this.body[i].x && ny === this.body[i].y) {
                         this.respawn(); return;
                     }
                 }
 
-                let newHead = {x: nx, y: ny};
+                let newHead = { x: nx, y: ny };
                 this.stats.totalDist++;
 
                 let itemIdx = items.findIndex(i => i.x === nx && i.y === ny);
                 if (itemIdx !== -1) {
                     let it = items[itemIdx];
-                    if (this.stats.items[it.def.id] !== undefined) this.stats.items[it.def.id]++;
-                    else if (it.def.isSkill) this.stats.items['skill']++;
+                    let cfg = it.def;
 
-                    if (it.def.isSkill) {
+                    if (this.stats.items[cfg.id] !== undefined) this.stats.items[cfg.id]++;
+
+                    if (cfg.type === 'xp') {
+                        this.gainXP(cfg.val);
+                    } else if (cfg.type === 'skill') {
                         this.skillCharges++;
                         showMsg(this.id, "GOT SKILL!");
-                    } else {
-                        this.gainXP(it.def.val);
+                    } else if (cfg.type === 'buffE') {
+                        this.xpBoostTimer = 5.0; // 重置 Buff 時間
+                        this.xpMultiplier = 1.5;
+                        showMsg(this.id, "XP x1.5!");
+                    } else if (cfg.type === 'chaos') {
+                        let opponent = snakes.find(s => s.id !== this.id);
+                        if (opponent && opponent.deadTimer <= 0) {
+                            opponent.forceTurn();
+                            showMsg(this.id, "CHAOS!");
+                            showMsg(opponent.id, "SPUN!");
+                        }
                     }
+
                     items.splice(itemIdx, 1);
-                    scheduleRespawn(it.def);
+                    // 所有道具 (包括 E) 都依據 config 設定重生 (E 的 delay 已設為 0)
+                    scheduleRespawn(cfg);
                 }
 
                 this.body.unshift(newHead);
@@ -561,12 +849,14 @@
             }
 
             gainXP(amount) {
-                this.xp += amount;
+                let finalXp = amount * this.xpMultiplier;
+                this.xp += finalXp;
+
                 while (this.xp >= this.maxXp) {
                     this.xp -= this.maxXp;
                     this.level++;
-                    this.skillCharges++; 
-                    this.maxXp = Math.floor(this.maxXp * 1.2); 
+                    this.skillCharges++;
+                    this.maxXp = Math.floor(this.maxXp * 1.2);
                     this.currentSpeedThreshold = this.currentSpeedThreshold / SPEED_INCREASE_FACTOR;
                     showMsg(this.id, "LEVEL UP!");
                 }
@@ -586,25 +876,20 @@
             let el = document.getElementById(`p${playerId}-msg`);
             el.innerText = text;
             el.style.opacity = '1';
-            if(el.timeout) clearTimeout(el.timeout);
+            if (el.timeout) clearTimeout(el.timeout);
             el.timeout = setTimeout(() => { el.style.opacity = '0'; }, 1500);
         }
 
-function resize() {
+        function resize() {
             const container = document.getElementById('game-area');
-            // 預留一些邊距
-            let padX = 40; 
+            let padX = 40;
             let padY = 40;
-
-            // 1. 先取得容器可用的最大空間
             let availW = container.clientWidth - padX;
             let availH = container.clientHeight - padY;
 
-            // 2. 計算能放下的最大格子數 (整數)
             GRID_W = Math.floor(availW / CELL_SIZE);
             GRID_H = Math.floor(availH / CELL_SIZE);
 
-            // 3. 【關鍵修改】反過來設定 Canvas 大小，使其剛好等於格子總寬高
             canvas.width = GRID_W * CELL_SIZE;
             canvas.height = GRID_H * CELL_SIZE;
             shadowCanvas.width = canvas.width;
@@ -617,15 +902,20 @@ function resize() {
                 x = Math.floor(Math.random() * GRID_W);
                 y = Math.floor(Math.random() * GRID_H);
                 attempts++;
-            } while(items.some(i => i.x===x && i.y===y) && attempts < 100);
-            return {x, y};
+            } while (items.some(i => i.x === x && i.y === y) && attempts < 100);
+            return { x, y };
         }
 
-        function initGame() {
+       function initGame() {
             resize();
             let centerY = Math.floor(GRID_H / 2);
+            const totalCells = GRID_W * GRID_H;
             
-            // 讀取 UI 上的設定
+            const xp5Config = ITEM_CONFIG.find(c => c.id === 'xp5');
+            if (xp5Config) {
+                xp5Config.count = Math.floor(totalCells * 0.15);
+            }
+
             let p1Name = p1NameIn.value || "PLAYER 1";
             let p2Name = p2NameIn.value || "PLAYER 2";
             let p1c = p1ColorIn.value;
@@ -635,14 +925,14 @@ function resize() {
                 new Snake(1, p1Name, 3, centerY, 1, 0, p1c),
                 new Snake(2, p2Name, GRID_W - 4, centerY, -1, 0, p2c)
             ];
-            
+
             items = [];
             pendingSpawns = [];
             timeLeft = GAME_DURATION;
             isGameOver = false;
-            
+
             ITEM_CONFIG.forEach(cfg => {
-                for(let i=0; i<cfg.count; i++) spawnItemImmediate(cfg);
+                for (let i = 0; i < cfg.count; i++) spawnItemImmediate(cfg);
             });
 
             lastTime = performance.now();
@@ -661,8 +951,7 @@ function resize() {
         function startGame() {
             document.getElementById('start-content').classList.add('hidden');
             document.getElementById('overlay-screen').classList.add('hidden');
-            
-            // 鎖定輸入框
+
             p1NameIn.disabled = true; p2NameIn.disabled = true;
             p1ColorIn.disabled = true; p2ColorIn.disabled = true;
 
@@ -680,7 +969,7 @@ function resize() {
                 timeLeft = 0;
                 endGame();
             }
-            
+
             let tDisplay = document.getElementById('timer-display');
             tDisplay.innerText = Math.ceil(timeLeft);
             if (timeLeft < 10) tDisplay.style.color = '#e74c3c';
@@ -705,14 +994,18 @@ function resize() {
                 let s = snakes[i];
                 let pId = s.id;
                 document.getElementById(`p${pId}-lv`).innerText = s.level;
-                
+
                 let pct = (s.xp / s.maxXp) * 100;
                 document.getElementById(`p${pId}-bar`).style.width = pct + "%";
                 document.getElementById(`p${pId}-charges`).innerText = s.skillCharges;
 
-                let tag = document.getElementById(`p${pId}-blind-tag`);
-                if (s.blindTimer > 0) tag.classList.remove('hidden');
-                else tag.classList.add('hidden');
+                let blindTag = document.getElementById(`p${pId}-blind-tag`);
+                if (s.blindTimer > 0) blindTag.classList.remove('hidden');
+                else blindTag.classList.add('hidden');
+
+                let boostTag = document.getElementById(`p${pId}-boost-tag`);
+                if (s.xpBoostTimer > 0) boostTag.classList.remove('hidden');
+                else boostTag.classList.add('hidden');
             });
         }
 
@@ -724,87 +1017,101 @@ function resize() {
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             items.forEach(it => {
-                let cx = it.x * CELL_SIZE + CELL_SIZE/2;
-                let cy = it.y * CELL_SIZE + CELL_SIZE/2;
-                if (it.def.isSkill) {
-                    ctx.font = "900 24px Roboto"; 
+                let cx = it.x * CELL_SIZE + CELL_SIZE / 2;
+                let cy = it.y * CELL_SIZE + CELL_SIZE / 2;
+                let type = it.def.type;
+
+                ctx.shadowBlur = 0;
+
+                if (type === 'skill') {
+                    ctx.font = "900 24px Roboto";
                     ctx.fillStyle = it.def.color;
                     ctx.shadowBlur = 15; ctx.shadowColor = 'red';
                     ctx.fillText("Q", cx, cy);
-                    ctx.shadowBlur = 0;
+                } else if (type === 'buffE') {
+                    ctx.font = "900 26px Roboto";
+                    ctx.fillStyle = it.def.color;
+                    ctx.shadowBlur = 15; ctx.shadowColor = '#0055ff';
+                    ctx.fillText("E", cx, cy);
+                } else if (type === 'chaos') {
+                    ctx.font = "24px sans-serif";
+                    ctx.fillStyle = it.def.color;
+                    ctx.fillText("🔄", cx, cy);
                 } else {
                     ctx.fillStyle = it.def.color;
                     let fontSize = 14;
-                    if(it.def.val >= 30) fontSize = 18;
-                    if(it.def.val >= 50) fontSize = 22;
+                    if (it.def.val >= 30) fontSize = 18;
+                    if (it.def.val >= 50) fontSize = 22;
                     ctx.font = `bold ${fontSize}px Roboto`;
-                    if(it.def.val >= 30) { ctx.shadowBlur = 10; ctx.shadowColor = it.def.color; }
+                    if (it.def.val >= 30) { ctx.shadowBlur = 10; ctx.shadowColor = it.def.color; }
                     ctx.fillText(it.def.val, cx, cy);
-                    ctx.shadowBlur = 0;
                 }
+                ctx.shadowBlur = 0;
             });
 
             drawShadowLayer();
 
             snakes.forEach(s => {
-                if(s.deadTimer > 0) return;
+                if (s.deadTimer > 0) return;
                 ctx.fillStyle = s.color;
+
+                if (s.xpBoostTimer > 0) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#00ffff';
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
                 s.body.forEach((b, i) => {
-                    ctx.fillRect(b.x*CELL_SIZE+1, b.y*CELL_SIZE+1, CELL_SIZE-2, CELL_SIZE-2);
+                    ctx.fillRect(b.x * CELL_SIZE + 1, b.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
                     if (i === 0) {
                         ctx.fillStyle = '#fff';
-                        let ex = (b.x*CELL_SIZE+CELL_SIZE/2) + s.dir.x*8;
-                        let ey = (b.y*CELL_SIZE+CELL_SIZE/2) + s.dir.y*8;
-                        ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI*2); ctx.fill();
+                        let ex = (b.x * CELL_SIZE + CELL_SIZE / 2) + s.dir.x * 8;
+                        let ey = (b.y * CELL_SIZE + CELL_SIZE / 2) + s.dir.y * 8;
+                        ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI * 2); ctx.fill();
                         ctx.fillStyle = s.color;
                     }
                 });
+                ctx.shadowBlur = 0;
             });
         }
 
-  function drawGrid() {
+        function drawGrid() {
             ctx.strokeStyle = COMMON_COLORS.grid;
             ctx.lineWidth = 1;
             ctx.beginPath();
-            
-            // 垂直線
             for (let x = 0; x <= GRID_W; x++) {
                 ctx.moveTo(x * CELL_SIZE, 0);
                 ctx.lineTo(x * CELL_SIZE, canvas.height);
             }
-            // 水平線
             for (let y = 0; y <= GRID_H; y++) {
                 ctx.moveTo(0, y * CELL_SIZE);
                 ctx.lineTo(canvas.width, y * CELL_SIZE);
             }
             ctx.stroke();
-            
-            // 如果您覺得 CSS 的邊框還不夠明顯，才保留下面這段，否則可以刪除
-            // ctx.strokeStyle = '#333';
-            // ctx.lineWidth = 2;
-            // ctx.strokeRect(0, 0, canvas.width, canvas.height);
         }
+
         function drawShadowLayer() {
             shadowCtx.clearRect(0, 0, canvas.width, canvas.height);
             shadowCtx.globalCompositeOperation = 'source-over';
-            shadowCtx.fillStyle = COMMON_COLORS.shadow; 
+            shadowCtx.fillStyle = COMMON_COLORS.shadow;
             shadowCtx.fillRect(0, 0, canvas.width, canvas.height);
             shadowCtx.globalCompositeOperation = 'destination-out';
 
             snakes.forEach(s => {
-                if(s.deadTimer > 0) return;
+                if (s.deadTimer > 0) return;
                 let head = s.body[0];
-                let cx = head.x * CELL_SIZE + CELL_SIZE/2;
-                let cy = head.y * CELL_SIZE + CELL_SIZE/2;
-                
+                let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
+                let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
+
                 let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
-                if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR; 
+                if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
                 let radiusPx = radiusGrid * CELL_SIZE;
 
                 let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
                 let facingAngle = Math.atan2(s.dir.y, s.dir.x);
                 let g = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
-                
+
                 if (s.blindTimer > 0) {
                     g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.9, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
                 } else {
@@ -813,14 +1120,14 @@ function resize() {
 
                 shadowCtx.fillStyle = g;
                 shadowCtx.beginPath();
-                shadowCtx.moveTo(cx, cy); 
-                shadowCtx.arc(cx, cy, radiusPx, facingAngle - spreadDeg*(Math.PI/360), facingAngle + spreadDeg*(Math.PI/360));
-                shadowCtx.lineTo(cx, cy); 
+                shadowCtx.moveTo(cx, cy);
+                shadowCtx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
+                shadowCtx.lineTo(cx, cy);
                 shadowCtx.fill();
 
                 shadowCtx.fillStyle = 'rgba(0,0,0,1)';
                 shadowCtx.beginPath();
-                shadowCtx.arc(cx, cy, CELL_SIZE * 0.8, 0, Math.PI*2);
+                shadowCtx.arc(cx, cy, CELL_SIZE * 0.8, 0, Math.PI * 2);
                 shadowCtx.fill();
             });
             ctx.drawImage(shadowCanvas, 0, 0);
@@ -830,23 +1137,22 @@ function resize() {
             isGameOver = true;
             let s1 = snakes[0];
             let s2 = snakes[1];
-            
-            let winnerId = 0; 
+
+            let winnerId = 0;
             let reason = "Time Up";
 
-            if (s1.level > s2.level) { winnerId = 1; reason = "Higher Level"; } 
-            else if (s2.level > s1.level) { winnerId = 2; reason = "Higher Level"; } 
+            if (s1.level > s2.level) { winnerId = 1; reason = "Higher Level"; }
+            else if (s2.level > s1.level) { winnerId = 2; reason = "Higher Level"; }
             else {
-                if (s1.xp > s2.xp) { winnerId = 1; reason = "More XP"; } 
-                else if (s2.xp > s1.xp) { winnerId = 2; reason = "More XP"; } 
+                if (s1.xp > s2.xp) { winnerId = 1; reason = "More XP"; }
+                else if (s2.xp > s1.xp) { winnerId = 2; reason = "More XP"; }
                 else {
-                    if (s1.stats.totalDist > s2.stats.totalDist) { winnerId = 1; reason = "Distance Traveled"; } 
-                    else if (s2.stats.totalDist > s1.stats.totalDist) { winnerId = 2; reason = "Distance Traveled"; } 
+                    if (s1.stats.totalDist > s2.stats.totalDist) { winnerId = 1; reason = "Distance Traveled"; }
+                    else if (s2.stats.totalDist > s1.stats.totalDist) { winnerId = 2; reason = "Distance Traveled"; }
                     else { winnerId = 0; reason = "Perfect Tie"; }
                 }
             }
 
-            // 解鎖輸入框
             p1NameIn.disabled = false; p2NameIn.disabled = false;
             p1ColorIn.disabled = false; p2ColorIn.disabled = false;
 
@@ -857,14 +1163,14 @@ function resize() {
             let overlay = document.getElementById('overlay-screen');
             let startContent = document.getElementById('start-content');
             let endContent = document.getElementById('end-content');
-            
+
             overlay.classList.remove('hidden');
             startContent.classList.add('hidden');
             endContent.classList.remove('hidden');
 
             let titleEl = document.getElementById('winner-title');
             let reasonEl = document.getElementById('win-reason');
-            
+
             if (wId === 1) {
                 titleEl.innerText = `${s1.name} WINS!`;
                 titleEl.style.color = s1.color;
@@ -891,12 +1197,14 @@ function resize() {
             `;
 
             const itemRows = [
-                {id: 'xp50', label: '50 XP', color: ITEM_COLORS.xp50},
-                {id: 'xp30', label: '30 XP', color: ITEM_COLORS.xp30},
-                {id: 'xp20', label: '20 XP', color: ITEM_COLORS.xp20},
-                {id: 'xp15', label: '15 XP', color: ITEM_COLORS.xp15},
-                {id: 'xp5', label: '5 XP', color: ITEM_COLORS.xp5},
-                {id: 'skill', label: 'Skill (Q)', color: ITEM_COLORS.skillQ}
+                { id: 'buffE', label: 'Buff EXP', color: ITEM_COLORS.buffE },
+                { id: 'chaos', label: 'Skill (🔄)', color: ITEM_COLORS.chaos },
+                { id: 'skill', label: 'Skill (Q)', color: ITEM_COLORS.skillQ },
+                { id: 'xp99', label: 'EXP 99', color: ITEM_COLORS.xp99 },
+                { id: 'xp30', label: 'EXP 30', color: ITEM_COLORS.xp30 },
+                { id: 'xp20', label: 'EXP 20', color: ITEM_COLORS.xp20 },
+                { id: 'xp15', label: 'EXP 15', color: ITEM_COLORS.xp15 },
+                { id: 'xp5', label: 'EXP 5', color: ITEM_COLORS.xp5 }
             ];
 
             itemRows.forEach(row => {
@@ -927,8 +1235,7 @@ function resize() {
         window.addEventListener('keydown', e => {
             let isEndScreen = !document.getElementById('end-content').classList.contains('hidden');
             let isStartScreen = !document.getElementById('start-content').classList.contains('hidden');
-            
-            // 避免在輸入框打字時觸發遊戲操作
+
             if (document.activeElement.tagName === "INPUT") return;
 
             if (isStartScreen && e.key === 'Enter') {
@@ -937,25 +1244,26 @@ function resize() {
             if (isEndScreen && (e.key === 'r' || e.key === 'R')) {
                 location.reload(); return;
             }
-            
+
             if (!isGameOver && !isStartScreen) {
                 // P1
-                if (e.key === 'w' && snakes[0].dir.y === 0) snakes[0].nextDir = {x: 0, y: -1};
-                if (e.key === 's' && snakes[0].dir.y === 0) snakes[0].nextDir = {x: 0, y: 1};
-                if (e.key === 'a' && snakes[0].dir.x === 0) snakes[0].nextDir = {x: -1, y: 0};
-                if (e.key === 'd' && snakes[0].dir.x === 0) snakes[0].nextDir = {x: 1, y: 0};
+                if (e.key === 'w' && snakes[0].dir.y === 0) snakes[0].nextDir = { x: 0, y: -1 };
+                if (e.key === 's' && snakes[0].dir.y === 0) snakes[0].nextDir = { x: 0, y: 1 };
+                if (e.key === 'a' && snakes[0].dir.x === 0) snakes[0].nextDir = { x: -1, y: 0 };
+                if (e.key === 'd' && snakes[0].dir.x === 0) snakes[0].nextDir = { x: 1, y: 0 };
                 if ((e.key === 'q' || e.key === 'Q')) snakes[0].useSkill(snakes[1]);
 
                 // P2
-                if (e.key === 'ArrowUp' && snakes[1].dir.y === 0) snakes[1].nextDir = {x: 0, y: -1};
-                if (e.key === 'ArrowDown' && snakes[1].dir.y === 0) snakes[1].nextDir = {x: 0, y: 1};
-                if (e.key === 'ArrowLeft' && snakes[1].dir.x === 0) snakes[1].nextDir = {x: -1, y: 0};
-                if (e.key === 'ArrowRight' && snakes[1].dir.x === 0) snakes[1].nextDir = {x: 1, y: 0};
+                if (e.key === 'ArrowUp' && snakes[1].dir.y === 0) snakes[1].nextDir = { x: 0, y: -1 };
+                if (e.key === 'ArrowDown' && snakes[1].dir.y === 0) snakes[1].nextDir = { x: 0, y: 1 };
+                if (e.key === 'ArrowLeft' && snakes[1].dir.x === 0) snakes[1].nextDir = { x: -1, y: 0 };
+                if (e.key === 'ArrowRight' && snakes[1].dir.x === 0) snakes[1].nextDir = { x: 1, y: 0 };
                 if (e.key === 'Enter') snakes[1].useSkill(snakes[0]);
             }
         });
 
-        window.addEventListener('resize', () => { if(!isGameOver) resize(); });
+        window.addEventListener('resize', () => { if (!isGameOver) resize(); });
     </script>
 </body>
+
 </html>
