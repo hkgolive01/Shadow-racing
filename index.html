@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Shadow Racing - No Collision Update</title>
+    <title>Shadow Racing - Smart AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=sans-serif:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
 
@@ -153,6 +153,11 @@
         .ai-label:hover {
             border-color: #666;
             color: #fff;
+        }
+
+        /* 用於遊戲開始後隱藏 */
+        .ai-hidden {
+            display: none !important;
         }
 
         .ai-checkbox {
@@ -501,7 +506,7 @@
             <div class="input-group">
                 <input type="text" id="p1-name-in" value="PLAYER 1" class="name-input" maxlength="12">
                 <input type="color" id="p1-color-in" value="#3498db" class="color-picker">
-                <label class="ai-label">
+                <label class="ai-label" id="p1-ai-label">
                     <input type="checkbox" id="p1-ai-toggle" class="ai-checkbox"> AI
                 </label>
                 <span id="p1-blind-tag" class="status-badge blind-badge hidden">BLINDED</span>
@@ -534,7 +539,7 @@
             <div class="input-group">
                 <input type="text" id="p2-name-in" value="PLAYER 2" class="name-input" maxlength="12">
                 <input type="color" id="p2-color-in" value="#e74c3c" class="color-picker">
-                <label class="ai-label">
+                <label class="ai-label" id="p2-ai-label">
                     <input type="checkbox" id="p2-ai-toggle" class="ai-checkbox"> AI
                 </label>
                 <span id="p2-blind-tag" class="status-badge blind-badge hidden">BLINDED</span>
@@ -762,47 +767,76 @@
                 this.dir = { x: newX, y: newY };
             }
 
-            // AI 思考邏輯：
-            // 1. 嚴格檢查 180 度回頭
-            // 2. 避免撞牆
-            // 3. 隨機生存 (不檢查撞蛇，因為蛇可以重疊)
+            // --- 智能 AI 邏輯 ---
             thinkAI() {
                 const head = this.body[0];
-                const possibleMoves = [
-                    {x: 0, y: -1}, {x: 0, y: 1}, {x: -1, y: 0}, {x: 1, y: 0}
+                
+                // 1. 計算目前的視野範圍 (Grid 單位)
+                let radiusGrid = VISION_BASE_DIST + (this.level - 1) * VISION_PER_LV_DIST;
+                if (this.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
+
+                // 2. 尋找視野內的所有道具
+                // AI 只能看到距離 <= radiusGrid 的道具
+                let visibleItems = items.filter(it => {
+                    let dx = it.x - head.x;
+                    let dy = it.y - head.y;
+                    // 使用歐幾里得距離
+                    return Math.sqrt(dx * dx + dy * dy) <= radiusGrid;
+                });
+
+                let target = null;
+                if (visibleItems.length > 0) {
+                    // 找出最近的道具
+                    visibleItems.sort((a, b) => {
+                        let da = Math.abs(a.x - head.x) + Math.abs(a.y - head.y);
+                        let db = Math.abs(b.x - head.x) + Math.abs(b.y - head.y);
+                        return da - db;
+                    });
+                    target = visibleItems[0];
+                }
+
+                // 3. 評估可行移動方向
+                const moves = [
+                    { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }
                 ];
 
-                // 過濾掉自殺的操作 (回頭、撞牆)
-                const safeMoves = possibleMoves.filter(m => {
-                    // 1. 絕對不能回頭 (180度檢測)
+                // 過濾掉撞牆和 180 度回頭
+                const safeMoves = moves.filter(m => {
+                    // 不能回頭
                     if (m.x === -this.dir.x && m.y === -this.dir.y) return false;
                     
                     const nx = head.x + m.x;
                     const ny = head.y + m.y;
-
-                    // 2. 不能撞牆
+                    // 不能撞牆
                     if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return false;
-
-                    // 3. 可以撞身體，所以不需要檢查 body collision
+                    
                     return true;
                 });
 
-                if (safeMoves.length === 0) {
-                    // 必死無疑 (例如被牆壁圍死? 雖然這遊戲只有邊界牆)，保持原樣等死
-                    return;
-                }
+                if (safeMoves.length === 0) return; // 沒路走，等死
 
-                // 檢查「繼續直走」是否在安全清單中
-                const straightMove = safeMoves.find(m => m.x === this.dir.x && m.y === this.dir.y);
-
-                // 決策：
-                // 如果直走安全，有較高機率直走 (減少抖動)，但有 20% 機率轉彎
-                if (straightMove && Math.random() > 0.2) {
-                    this.nextDir = straightMove;
+                // 4. 決策
+                if (target) {
+                    // 如果有目標，選擇能縮短與目標距離的移動
+                    // 對每個安全移動進行評分 (距離越小越好)
+                    safeMoves.sort((a, b) => {
+                        let posA = { x: head.x + a.x, y: head.y + a.y };
+                        let posB = { x: head.x + b.x, y: head.y + b.y };
+                        let distA = Math.abs(posA.x - target.x) + Math.abs(posA.y - target.y);
+                        let distB = Math.abs(posB.x - target.x) + Math.abs(posB.y - target.y);
+                        return distA - distB;
+                    });
+                    this.nextDir = safeMoves[0];
                 } else {
-                    // 隨機選一個安全的方向
-                    const pick = safeMoves[Math.floor(Math.random() * safeMoves.length)];
-                    this.nextDir = pick;
+                    // 如果沒有目標 (隨機遊走模式)
+                    // 優先保持直走 (避免原地打轉)
+                    const straightMove = safeMoves.find(m => m.x === this.dir.x && m.y === this.dir.y);
+                    if (straightMove && Math.random() > 0.15) { // 85% 機率直走
+                        this.nextDir = straightMove;
+                    } else {
+                        // 隨機轉向
+                        this.nextDir = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+                    }
                 }
             }
 
@@ -980,8 +1014,15 @@
             let p1IsAi = p1AiToggle.checked;
             let p2IsAi = p2AiToggle.checked;
 
-            if(p1IsAi) p1Name += " (AI)";
-            if(p2IsAi) p2Name += " (AI)";
+            // 強制 AI 名字為 "AI"
+            if(p1IsAi) {
+                p1Name = "AI";
+                p1NameIn.value = "AI"; // 更新介面顯示
+            }
+            if(p2IsAi) {
+                p2Name = "AI";
+                p2NameIn.value = "AI"; // 更新介面顯示
+            }
 
             snakes = [
                 new Snake(1, p1Name, 3, centerY, 1, 0, p1c, p1IsAi),
@@ -1016,7 +1057,10 @@
 
             p1NameIn.disabled = true; p2NameIn.disabled = true;
             p1ColorIn.disabled = true; p2ColorIn.disabled = true;
-            p1AiToggle.disabled = true; p2AiToggle.disabled = true;
+            
+            // 隱藏 AI 勾選框
+            document.getElementById('p1-ai-label').classList.add('ai-hidden');
+            document.getElementById('p2-ai-label').classList.add('ai-hidden');
 
             initGame();
             requestAnimationFrame(gameLoop);
@@ -1218,7 +1262,10 @@
 
             p1NameIn.disabled = false; p2NameIn.disabled = false;
             p1ColorIn.disabled = false; p2ColorIn.disabled = false;
-            p1AiToggle.disabled = false; p2AiToggle.disabled = false;
+
+            // 遊戲結束顯示 AI 勾選框
+            document.getElementById('p1-ai-label').classList.remove('ai-hidden');
+            document.getElementById('p2-ai-label').classList.remove('ai-hidden');
 
             showEndScreen(winnerId, reason, s1, s2);
         }
