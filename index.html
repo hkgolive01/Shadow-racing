@@ -20,13 +20,14 @@
         }
 
         #ui-bar {
-            height: 120px;
+            /* 高度縮減，因為技能與等級併排了 */
+            height: 110px;
             background: #0b0b0b;
             border-bottom: 2px solid #333;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 15px 30px 0 30px;
+            padding: 10px 30px 0 30px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.9);
             z-index: 10;
             flex-shrink: 0;
@@ -36,7 +37,7 @@
         .center-display {
             text-align: center;
             width: 200px;
-            margin-top: 5px;
+            margin-top: 10px;
         }
 
         #timer-display {
@@ -67,7 +68,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 2px;
         }
         .p2-info .input-group { flex-direction: row-reverse; }
 
@@ -76,10 +77,10 @@
             border: 1px solid transparent;
             color: inherit;
             font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            width: 200px;
-            padding: 2px 5px;
+            width: 180px;
+            padding: 2px 0;
             border-radius: 4px;
             outline: none;
             transition: 0.2s;
@@ -91,8 +92,8 @@
         .color-picker {
             -webkit-appearance: none;
             border: none;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             background: none;
             padding: 0;
@@ -100,25 +101,33 @@
         .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
         .color-picker::-webkit-color-swatch { border: 2px solid #555; border-radius: 50%; }
 
-        .stats { font-size: 14px; color: #aaa; font-family: 'Roboto', sans-serif; margin-bottom: 4px;}
-        
-        .bar-bg { width: 100%; height: 10px; background: #333; margin-top: 2px; border-radius: 4px; overflow: hidden; position: relative;}
-        .xp-bar { height: 100%; transition: width 0.2s; }
-        
-        .skill-box {
-            margin-top: 8px;
-            background: #222;
-            padding: 4px 10px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            display: inline-block;
-            font-size: 14px;
-            color: #f1c40f;
+        /* --- 併排數據顯示區 --- */
+        .stats-row-composite {
+            display: flex;
+            align-items: baseline;
+            gap: 25px; /* 兩個數據之間的間距 */
+            margin-top: -5px;
+        }
+        .p2-info .stats-row-composite { flex-direction: row-reverse; }
+
+        .big-stat {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
         }
 
+        .stat-label { font-size: 14px; color: #666; font-weight: bold; }
+        .stat-val { font-size: 48px; font-weight: 900; line-height: 1; }
+        
+        /* 技能數字特別顏色 */
+        .skill-val {font-size: 32px; color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.2); }
+
+        .bar-bg { width: 100%; height: 8px; background: #333; margin-top: 5px; border-radius: 4px; overflow: hidden; position: relative;}
+        .xp-bar { height: 100%; transition: width 0.2s; }
+        
         .player-msg {
             height: 20px;
-            margin-top: 6px;
+            margin-top: 4px;
             font-size: 14px;
             font-weight: bold;
             text-transform: uppercase;
@@ -130,9 +139,9 @@
         .blind-badge {
             background: #fff;
             color: #000;
-            padding: 2px 6px;
+            padding: 1px 4px;
             border-radius: 2px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             box-shadow: 0 0 10px #fff;
             animation: flash 0.5s infinite;
@@ -150,12 +159,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px; /* 給邊框留一點空間 */
+            box-sizing: border-box; 
         }
 
         canvas {
             display: block;
             background-color: #111; 
-            box-shadow: 0 0 30px #000;
+            /* 新增：明顯的邊框，區分戰場與背景 */
+            border: 3px solid #444; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
         /* --- OVERLAY SCREENS --- */
@@ -184,7 +197,6 @@
             text-indent: 5px;
         }
 
-        /* --- 內容盒子 (加寬) --- */
         .content-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 30px 40px;
@@ -200,25 +212,20 @@
         .icon { width: 40px; font-size: 24px; text-align: center; margin-right: 15px; }
         .desc { color: #ccc; font-size: 16px; line-height: 1.4; }
 
-        /* --- 結算表樣式 (Modified) --- */
+        /* --- 結算表樣式 --- */
         .result-header { text-align: center; margin-bottom: 30px; }
         .winner-announce { font-size: 48px; font-weight: bold; font-family: 'Orbitron'; margin-bottom: 10px; text-shadow: 0 0 20px currentColor; }
         .reason-text { color: #888; font-size: 18px; margin-bottom: 20px; font-style: italic; }
 
-        /* 修改後的佈局邏輯：
-           .stat-grid 是一個垂直容器
-           .stat-row 才是 Grid，負責一行內的 左-中-右 佈局
-        */
         .stat-grid {
             display: flex;
             flex-direction: column;
             width: 100%;
-            gap: 0; /* 間距由 row padding 處理 */
+            gap: 0;
         }
 
         .stat-row {
             display: grid;
-            /* 關鍵：左1fr - 中間固定寬度 - 右1fr，確保左右對稱，中間項目永遠居中 */
             grid-template-columns: 1fr 180px 1fr;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -226,9 +233,7 @@
             transition: background 0.2s;
         }
         
-        .stat-row:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
+        .stat-row:hover { background: rgba(255, 255, 255, 0.02); }
 
         .stat-label { 
             color: #888; 
@@ -236,7 +241,7 @@
             font-size: 16px;
             display: flex;
             align-items: center;
-            justify-content: center; /* 讓標籤內容在中間格子裡完全置中 */
+            justify-content: center;
             gap: 8px;
             white-space: nowrap;
         }
@@ -244,40 +249,16 @@
         .p1-val, .p2-val { 
             font-family: 'Orbitron'; 
             font-weight: bold; 
-            text-align: center; /* 左右數據在各自格子內置中 */
+            text-align: center;
             font-size: 18px;
         }
         
-        /* 核心等級行特別樣式 */
-        .level-row {
-            padding: 15px 0;
-            border-bottom: 2px solid #444;
-            margin-bottom: 10px;
-        }
+        .level-row { padding: 15px 0; border-bottom: 2px solid #444; margin-bottom: 10px; }
+        .level-row .p1-val, .level-row .p2-val { font-size: 3.5rem; text-shadow: 0 0 15px currentColor; }
+        .level-row .stat-label { font-size: 1.5rem; color: #fff; font-weight: bold; font-family: 'Orbitron'; }
 
-        .level-row .p1-val, .level-row .p2-val {
-            font-size: 3.5rem;
-            text-shadow: 0 0 15px currentColor;
-        }
-        .level-row .stat-label {
-            font-size: 1.5rem;
-            color: #fff;
-            font-weight: bold;
-            font-family: 'Orbitron';
-        }
-
-        /* 總距離行 */
-        .total-row {
-            border-top: 2px solid #555;
-            border-bottom: none;
-            margin-top: 15px;
-            padding-top: 20px;
-        }
-        .total-row .stat-label, 
-        .total-row .p1-val, 
-        .total-row .p2-val {
-            font-size: 20px;
-        }
+        .total-row { border-top: 2px solid #555; border-bottom: none; margin-top: 15px; padding-top: 20px; }
+        .total-row .stat-label, .total-row .p1-val, .total-row .p2-val { font-size: 20px; }
 
         .item-dot { width: 12px; height: 12px; display: inline-block; border-radius: 50%; }
 
@@ -309,11 +290,19 @@
                 <input type="color" id="p1-color-in" value="#3498db" class="color-picker">
                 <span id="p1-blind-tag" class="blind-badge hidden">BLINDED</span>
             </div>
-            <div class="stats">LV <span id="p1-lv" style="font-size:20px; font-weight:bold">1</span></div>
-            <div class="bar-bg"><div id="p1-bar" class="xp-bar" style="width:0%"></div></div>
-            <div class="skill-box">
-                SKILL (Q): <span id="p1-charges">0</span> CHARGES
+            
+            <div class="stats-row-composite">
+                <div class="big-stat">
+                    <span class="stat-label">LV</span>
+                    <span id="p1-lv" class="stat-val">1</span>
+                </div>
+                <div class="big-stat">
+                    <span class="stat-label">[Q]</span>
+                    <span id="p1-charges" class="stat-val skill-val">0</span>
+                </div>
             </div>
+
+            <div class="bar-bg"><div id="p1-bar" class="xp-bar" style="width:0%"></div></div>
             <div id="p1-msg" class="player-msg"></div>
         </div>
 
@@ -328,11 +317,19 @@
                 <input type="color" id="p2-color-in" value="#e74c3c" class="color-picker">
                 <span id="p2-blind-tag" class="blind-badge hidden">BLINDED</span>
             </div>
-            <div class="stats">LV <span id="p2-lv" style="font-size:20px; font-weight:bold">1</span></div>
-            <div class="bar-bg"><div id="p2-bar" class="xp-bar" style="width:0%"></div></div>
-            <div class="skill-box">
-                SKILL (ENTER): <span id="p2-charges">0</span> CHARGES
+
+            <div class="stats-row-composite">
+                <div class="big-stat">
+                    <span class="stat-label">LV</span>
+                    <span id="p2-lv" class="stat-val">1</span>
+                </div>
+                <div class="big-stat">
+                    <span class="stat-label">[ENTER]</span>
+                    <span id="p2-charges" class="stat-val skill-val">0</span>
+                </div>
             </div>
+
+            <div class="bar-bg"><div id="p2-bar" class="xp-bar" style="width:0%"></div></div>
             <div id="p2-msg" class="player-msg"></div>
         </div>
     </div>
@@ -345,9 +342,9 @@
                 <h1>Shadow Racing</h1>
                 <div class="content-box">
                     <div class="rule-title">遊戲規則</div>
-                    <div class="rule-row"><span class="icon">🔢</span><span class="desc">吃掉數字增加經驗。<strong>每升一級，移動速度提升 10%！</strong></span></div>
-                    <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span class="desc">吃掉 <strong style="color:red">Q</strong> 增加技能。升級視野會變廣。</span></div>
-                    <div class="rule-row"><span class="icon">⚡</span><span class="desc"><strong>致盲：</strong> 使對手視野剩 30% (3秒)。(P1: Q鍵 / P2: Enter鍵)</span></div>
+                    <div class="rule-row"><span class="icon">🔢</span><span class="desc">吃掉數字增加經驗。<strong>每升一級，視野增加，同時移動速度提升 10%！</strong></span></div>
+                    <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span class="desc">吃掉 <strong style="color:red">Q</strong> 增加技能使用次數。</span></div>
+                    <div class="rule-row"><span class="icon">⚡</span><span class="desc"><strong>致盲：</strong> 使對手視野剩 30% (3秒)。</span></div>
                            
                     <div class="rule-title" style="margin-top:15px">操作與勝利條件</div>
                     <div class="rule-row"><span class="icon" style="color:#3498db">P1</span><span class="desc"><strong>W A S D</strong> 移動。 <strong>Q 鍵</strong>：致盲對手。</span></div>
@@ -595,8 +592,14 @@
         }
 
         function resize() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
+            // 注意：因為 canvas 有 border，container 的 clientWidth 包含 border 需要小心
+            // 這裡我們讓 canvas 寬高填滿 container 減去 padding
+            let style = window.getComputedStyle(container);
+            let padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+            let padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+            
+            canvas.width = container.clientWidth - padX;
+            canvas.height = container.clientHeight - padY;
             shadowCanvas.width = canvas.width;
             shadowCanvas.height = canvas.height;
             GRID_W = Math.floor(canvas.width / CELL_SIZE);
