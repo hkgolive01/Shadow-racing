@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shadow Racing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
+
+        body {
+            background-color: #050505;
+            color: #ecf0f1;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #ui-bar {
+            height: 120px;
+            background: #0b0b0b;
+            border-bottom: 2px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 30px 0 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+            z-index: 10;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .center-display {
+            text-align: center;
+            width: 200px;
+            margin-top: 5px;
+        }
+
+        #timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 70px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            line-height: 1;
+        }
+
+        .timer-label {
+            font-size: 14px; color: #666; letter-spacing: 2px; margin-top: 5px;
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            width: 380px;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .p1-info { border-left: 4px solid; padding-left: 20px; }
+        .p2-info { border-right: 4px solid; padding-right: 20px; text-align: right; align-items: flex-end; }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .p2-info .input-group { flex-direction: row-reverse; }
+
+        .name-input {
+            background: transparent;
+            border: 1px solid transparent;
+            color: inherit;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            width: 200px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .name-input:hover { border-color: #333; cursor: pointer; }
+        .name-input:focus { border-color: #fff; background: #222; cursor: text; }
+        .p2-info .name-input { text-align: right; }
+
+        .color-picker {
+            -webkit-appearance: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+        }
+        .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-picker::-webkit-color-swatch { border: 2px solid #555; border-radius: 50%; }
+
+        .stats { font-size: 14px; color: #aaa; font-family: 'Roboto', sans-serif; margin-bottom: 4px;}
+        
+        .bar-bg { width: 100%; height: 10px; background: #333; margin-top: 2px; border-radius: 4px; overflow: hidden; position: relative;}
+        .xp-bar { height: 100%; transition: width 0.2s; }
+        
+        .skill-box {
+            margin-top: 8px;
+            background: #222;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            display: inline-block;
+            font-size: 14px;
+            color: #f1c40f;
+        }
+
+        .player-msg {
+            height: 20px;
+            margin-top: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .blind-badge {
+            background: #fff;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 10px #fff;
+            animation: flash 0.5s infinite;
+            display: inline-block;
+        }
+        @keyframes flash { 0% {opacity:1;} 50% {opacity:0.5;} 100% {opacity:1;} }
+
+        /* --- GAME AREA --- */
+        #game-area {
+            flex-grow: 1;
+            position: relative;
+            background: #000;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            background-color: #111; 
+            box-shadow: 0 0 30px #000;
+        }
+
+        /* --- OVERLAY SCREENS --- */
+        #overlay-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.97);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.3s;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 64px;
+            background: linear-gradient(to right, #2ecc71, #f1c40f);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-align: center;
+            text-indent: 5px;
+        }
+
+        /* --- 內容盒子 (加寬) --- */
+        .content-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px 40px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            max-width: 950px;
+            width: 90%;
+            text-align: left;
+        }
+
+        .rule-title { color: #f1c40f; font-weight: bold; font-size: 20px; margin-bottom: 10px; font-family: 'Orbitron'; border-bottom: 1px solid #444; padding-bottom: 5px;}
+        .rule-row { display: flex; margin-bottom: 10px; align-items: center; }
+        .icon { width: 40px; font-size: 24px; text-align: center; margin-right: 15px; }
+        .desc { color: #ccc; font-size: 16px; line-height: 1.4; }
+
+        /* --- 結算表樣式 (Modified) --- */
+        .result-header { text-align: center; margin-bottom: 30px; }
+        .winner-announce { font-size: 48px; font-weight: bold; font-family: 'Orbitron'; margin-bottom: 10px; text-shadow: 0 0 20px currentColor; }
+        .reason-text { color: #888; font-size: 18px; margin-bottom: 20px; font-style: italic; }
+
+        /* 修改後的佈局邏輯：
+           .stat-grid 是一個垂直容器
+           .stat-row 才是 Grid，負責一行內的 左-中-右 佈局
+        */
+        .stat-grid {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 0; /* 間距由 row padding 處理 */
+        }
+
+        .stat-row {
+            display: grid;
+            /* 關鍵：左1fr - 中間固定寬度 - 右1fr，確保左右對稱，中間項目永遠居中 */
+            grid-template-columns: 1fr 180px 1fr;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 0;
+            transition: background 0.2s;
+        }
+        
+        .stat-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-label { 
+            color: #888; 
+            text-align: center; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 讓標籤內容在中間格子裡完全置中 */
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .p1-val, .p2-val { 
+            font-family: 'Orbitron'; 
+            font-weight: bold; 
+            text-align: center; /* 左右數據在各自格子內置中 */
+            font-size: 18px;
+        }
+        
+        /* 核心等級行特別樣式 */
+        .level-row {
+            padding: 15px 0;
+            border-bottom: 2px solid #444;
+            margin-bottom: 10px;
+        }
+
+        .level-row .p1-val, .level-row .p2-val {
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px currentColor;
+        }
+        .level-row .stat-label {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Orbitron';
+        }
+
+        /* 總距離行 */
+        .total-row {
+            border-top: 2px solid #555;
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 20px;
+        }
+        .total-row .stat-label, 
+        .total-row .p1-val, 
+        .total-row .p2-val {
+            font-size: 20px;
+        }
+
+        .item-dot { width: 12px; height: 12px; display: inline-block; border-radius: 50%; }
+
+        .btn {
+            margin-top: 30px;
+            padding: 15px 60px;
+            font-size: 24px;
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            color: #2ecc71;
+            border: 2px solid #2ecc71;
+            cursor: pointer;
+            transition: 0.2s;
+            animation: pulse 2s infinite;
+        }
+        .btn:hover { background: #2ecc71; color: #000; box-shadow: 0 0 30px #2ecc71; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+
+<body>
+
+    <div id="ui-bar">
+        <div class="player-info p1-info" id="p1-panel">
+            <div class="input-group">
+                <input type="text" id="p1-name-in" value="PLAYER 1" class="name-input" maxlength="12">
+                <input type="color" id="p1-color-in" value="#3498db" class="color-picker">
+                <span id="p1-blind-tag" class="blind-badge hidden">BLINDED</span>
+            </div>
+            <div class="stats">LV <span id="p1-lv" style="font-size:20px; font-weight:bold">1</span></div>
+            <div class="bar-bg"><div id="p1-bar" class="xp-bar" style="width:0%"></div></div>
+            <div class="skill-box">
+                SKILL (Q): <span id="p1-charges">0</span> CHARGES
+            </div>
+            <div id="p1-msg" class="player-msg"></div>
+        </div>
+
+        <div class="center-display">
+            <div id="timer-display">90</div>
+            <div class="timer-label">SECONDS LEFT</div>
+        </div>
+
+        <div class="player-info p2-info" id="p2-panel">
+            <div class="input-group">
+                <input type="text" id="p2-name-in" value="PLAYER 2" class="name-input" maxlength="12">
+                <input type="color" id="p2-color-in" value="#e74c3c" class="color-picker">
+                <span id="p2-blind-tag" class="blind-badge hidden">BLINDED</span>
+            </div>
+            <div class="stats">LV <span id="p2-lv" style="font-size:20px; font-weight:bold">1</span></div>
+            <div class="bar-bg"><div id="p2-bar" class="xp-bar" style="width:0%"></div></div>
+            <div class="skill-box">
+                SKILL (ENTER): <span id="p2-charges">0</span> CHARGES
+            </div>
+            <div id="p2-msg" class="player-msg"></div>
+        </div>
+    </div>
+
+    <div id="game-area">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="overlay-screen">
+            <div id="start-content">
+                <h1>Shadow Racing</h1>
+                <div class="content-box">
+                    <div class="rule-title">遊戲規則</div>
+                    <div class="rule-row"><span class="icon">🔢</span><span class="desc">吃掉數字增加經驗。<strong>每升一級，移動速度提升 10%！</strong></span></div>
+                    <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span class="desc">吃掉 <strong style="color:red">Q</strong> 增加技能。升級視野會變廣。</span></div>
+                    <div class="rule-row"><span class="icon">⚡</span><span class="desc"><strong>致盲：</strong> 使對手視野剩 30% (3秒)。(P1: Q鍵 / P2: Enter鍵)</span></div>
+                           
+                    <div class="rule-title" style="margin-top:15px">操作與勝利條件</div>
+                    <div class="rule-row"><span class="icon" style="color:#3498db">P1</span><span class="desc"><strong>W A S D</strong> 移動。 <strong>Q 鍵</strong>：致盲對手。</span></div>
+                    <div class="rule-row"><span class="icon" style="color:#e74c3c">P2</span><span class="desc"><strong>方向鍵</strong> 移動。 <strong>Enter 鍵</strong>：致盲對手。</span></div>
+                    <div class="rule-row"><span class="icon">🏆</span><span class="desc">判定順序：<strong>等級高</strong> > <strong>經驗多</strong> > <strong>距離長</strong></span></div>
+                 
+                    <div class="rule-title" style="margin-top:15px">設定</div>
+                    <div class="rule-row"><span class="icon">🎨</span><span class="desc">點擊頂部玩家名稱可修改名字，點擊色塊可修改顏色。</span></div>
+                </div>
+                <div style="text-align:center"><button class="btn" onclick="startGame()">START GAME</button></div>
+            </div>
+
+            <div id="end-content" class="hidden">
+                <div class="result-header">
+                    <div id="winner-title" class="winner-announce">PLAYER 1 WINS!</div>
+                    <div id="win-reason" class="reason-text">Higher Level</div>
+                </div>
+                
+                <div class="content-box">
+                    <div class="stat-grid" id="stat-table">
+                        </div>
+                </div>
+                
+                <div style="text-align:center">
+                    <button class="btn" onclick="location.reload()">RESTART (R)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-area');
+        const shadowCanvas = document.createElement('canvas');
+        const shadowCtx = shadowCanvas.getContext('2d');
+
+        // --- 配置 ---
+        const CELL_SIZE = 30;
+        let GRID_W, GRID_H;
+        
+        const SPEED_BASE_THRESHOLD = 80; 
+        const SPEED_INCREASE_FACTOR = 1.1; 
+
+        const GAME_DURATION = 90; 
+        const BLIND_DURATION = 3.0; 
+        const VISION_BASE_DIST = 5.0; 
+        const VISION_BASE_ANGLE = 90; 
+        const VISION_PER_LV_DIST = 0.5; 
+        const VISION_PER_LV_ANGLE = 10; 
+        const BLIND_FACTOR = 0.3;
+
+        // 顏色管理 (初始值)
+        let P1_COLOR = '#3498db';
+        let P2_COLOR = '#e74c3c';
+
+        const ITEM_COLORS = {
+            xp5: '#95a5a6', xp15: '#2ecc71', xp20: '#3498db', xp30: '#9b59b6', xp50: '#f1c40f', 
+            skillQ: '#ff0000' 
+        };
+
+        const COMMON_COLORS = { bg: '#111', grid: '#1a1a1a', shadow: '#000000' };
+
+        let gameLoopId;
+        let lastTime = 0;
+        let timeLeft = GAME_DURATION;
+        let isGameOver = false;
+        let snakes = [];
+        let items = []; 
+        let pendingSpawns = []; 
+
+        const ITEM_CONFIG = [
+            { id: 'xp5',  val: 5,  count: 40, color: ITEM_COLORS.xp5,  isSkill: false, delay: 0 },
+            { id: 'xp15', val: 15, count: 20, color: ITEM_COLORS.xp15, isSkill: false, delay: 0 },
+            { id: 'xp20', val: 20, count: 10, color: ITEM_COLORS.xp20, isSkill: false, delay: 0 },
+            { id: 'xp30', val: 30, count: 5,  color: ITEM_COLORS.xp30, isSkill: false, delay: 0 },
+            { id: 'xp50', val: 50, count: 1,  color: ITEM_COLORS.xp50, isSkill: false, delay: 0 },
+            { id: 'skill',val: 0,  count: 1,  color: ITEM_COLORS.skillQ, isSkill: true, delay: 2.0 } 
+        ];
+
+        // --- UI 更新監聽 ---
+        const p1NameIn = document.getElementById('p1-name-in');
+        const p2NameIn = document.getElementById('p2-name-in');
+        const p1ColorIn = document.getElementById('p1-color-in');
+        const p2ColorIn = document.getElementById('p2-color-in');
+
+        function updatePanelStyles() {
+            P1_COLOR = p1ColorIn.value;
+            P2_COLOR = p2ColorIn.value;
+            
+            document.querySelector('.p1-info').style.borderColor = P1_COLOR;
+            document.querySelector('.p1-info').style.color = P1_COLOR;
+            document.getElementById('p1-msg').style.color = P1_COLOR;
+            
+            document.querySelector('.p2-info').style.borderColor = P2_COLOR;
+            document.querySelector('.p2-info').style.color = P2_COLOR;
+            document.getElementById('p2-msg').style.color = P2_COLOR;
+
+            // 更新XP條顏色
+            document.getElementById('p1-bar').style.backgroundColor = P1_COLOR;
+            document.getElementById('p2-bar').style.backgroundColor = P2_COLOR;
+        }
+
+        p1ColorIn.addEventListener('input', updatePanelStyles);
+        p2ColorIn.addEventListener('input', updatePanelStyles);
+        
+        // 初始套用一次
+        updatePanelStyles();
+
+        class Snake {
+            constructor(id, name, x, y, dirX, dirY, color) {
+                this.id = id;
+                this.name = name;
+                this.color = color;
+                this.body = [{x, y}];
+                this.dir = {x: dirX, y: dirY}; 
+                this.nextDir = {x: dirX, y: dirY};
+                
+                this.xp = 0;
+                this.maxXp = 100; 
+                this.level = 1;
+                
+                this.moveAcc = 0;
+                this.currentSpeedThreshold = SPEED_BASE_THRESHOLD; 
+                
+                this.skillCharges = 0; 
+                this.blindTimer = 0;   
+                this.deadTimer = 0; 
+
+                this.stats = {
+                    totalDist: 0,
+                    items: { xp5: 0, xp15: 0, xp20: 0, xp30: 0, xp50: 0, skill: 0 }
+                };
+            }
+
+            respawn() {
+                this.deadTimer = 2.0;
+                this.body = [{x: -999, y: -999}]; 
+                showMsg(this.id, "CRASHED!");
+            }
+
+            resetToMap() {
+                let centerY = Math.floor(GRID_H / 2);
+                if (this.id === 1) {
+                    this.body = [{x: 3, y: centerY}];
+                    this.dir = {x: 1, y: 0}; 
+                    this.nextDir = {x: 1, y: 0};
+                } else {
+                    this.body = [{x: GRID_W - 4, y: centerY}];
+                    this.dir = {x: -1, y: 0}; 
+                    this.nextDir = {x: -1, y: 0};
+                }
+            }
+
+            applyBlind() {
+                this.blindTimer = BLIND_DURATION;
+            }
+
+            update(dt) {
+                if (this.deadTimer > 0) {
+                    this.deadTimer -= dt;
+                    if (this.deadTimer <= 0) this.resetToMap();
+                    return;
+                }
+                if (this.blindTimer > 0) this.blindTimer -= dt;
+                this.moveAcc += dt * 1000;
+                if (this.moveAcc >= this.currentSpeedThreshold) {
+                    this.moveAcc = 0;
+                    this.move();
+                }
+            }
+
+            move() {
+                if (this.nextDir.x !== -this.dir.x && this.nextDir.y !== -this.dir.y) {
+                    this.dir = this.nextDir;
+                }
+
+                let head = this.body[0];
+                let nx = head.x + this.dir.x;
+                let ny = head.y + this.dir.y;
+
+                if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
+                    this.respawn(); return;
+                }
+                
+                // 自撞檢測
+                for(let i = 1; i < this.body.length; i++) {
+                    if (nx === this.body[i].x && ny === this.body[i].y) {
+                        this.respawn(); return;
+                    }
+                }
+
+                let newHead = {x: nx, y: ny};
+                this.stats.totalDist++;
+
+                let itemIdx = items.findIndex(i => i.x === nx && i.y === ny);
+                if (itemIdx !== -1) {
+                    let it = items[itemIdx];
+                    if (this.stats.items[it.def.id] !== undefined) this.stats.items[it.def.id]++;
+                    else if (it.def.isSkill) this.stats.items['skill']++;
+
+                    if (it.def.isSkill) {
+                        this.skillCharges++;
+                        showMsg(this.id, "GOT SKILL!");
+                    } else {
+                        this.gainXP(it.def.val);
+                    }
+                    items.splice(itemIdx, 1);
+                    scheduleRespawn(it.def);
+                }
+
+                this.body.unshift(newHead);
+                let targetLen = 3 + Math.floor(this.level / 2);
+                while (this.body.length > targetLen) this.body.pop();
+            }
+
+            gainXP(amount) {
+                this.xp += amount;
+                while (this.xp >= this.maxXp) {
+                    this.xp -= this.maxXp;
+                    this.level++;
+                    this.skillCharges++; 
+                    this.maxXp = Math.floor(this.maxXp * 1.2); 
+                    this.currentSpeedThreshold = this.currentSpeedThreshold / SPEED_INCREASE_FACTOR;
+                    showMsg(this.id, "LEVEL UP!");
+                }
+            }
+
+            useSkill(targetSnake) {
+                if (this.skillCharges > 0) {
+                    this.skillCharges--;
+                    targetSnake.applyBlind();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        function showMsg(playerId, text) {
+            let el = document.getElementById(`p${playerId}-msg`);
+            el.innerText = text;
+            el.style.opacity = '1';
+            if(el.timeout) clearTimeout(el.timeout);
+            el.timeout = setTimeout(() => { el.style.opacity = '0'; }, 1500);
+        }
+
+        function resize() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            shadowCanvas.width = canvas.width;
+            shadowCanvas.height = canvas.height;
+            GRID_W = Math.floor(canvas.width / CELL_SIZE);
+            GRID_H = Math.floor(canvas.height / CELL_SIZE);
+        }
+
+        function getSafePos() {
+            let x, y, attempts = 0;
+            do {
+                x = Math.floor(Math.random() * GRID_W);
+                y = Math.floor(Math.random() * GRID_H);
+                attempts++;
+            } while(items.some(i => i.x===x && i.y===y) && attempts < 100);
+            return {x, y};
+        }
+
+        function initGame() {
+            resize();
+            let centerY = Math.floor(GRID_H / 2);
+            
+            // 讀取 UI 上的設定
+            let p1Name = p1NameIn.value || "PLAYER 1";
+            let p2Name = p2NameIn.value || "PLAYER 2";
+            let p1c = p1ColorIn.value;
+            let p2c = p2ColorIn.value;
+
+            snakes = [
+                new Snake(1, p1Name, 3, centerY, 1, 0, p1c),
+                new Snake(2, p2Name, GRID_W - 4, centerY, -1, 0, p2c)
+            ];
+            
+            items = [];
+            pendingSpawns = [];
+            timeLeft = GAME_DURATION;
+            isGameOver = false;
+            
+            ITEM_CONFIG.forEach(cfg => {
+                for(let i=0; i<cfg.count; i++) spawnItemImmediate(cfg);
+            });
+
+            lastTime = performance.now();
+        }
+
+        function spawnItemImmediate(cfg) {
+            let p = getSafePos();
+            items.push({ x: p.x, y: p.y, def: cfg });
+        }
+
+        function scheduleRespawn(cfg) {
+            if (cfg.delay > 0) pendingSpawns.push({ timer: cfg.delay, def: cfg });
+            else spawnItemImmediate(cfg);
+        }
+
+        function startGame() {
+            document.getElementById('start-content').classList.add('hidden');
+            document.getElementById('overlay-screen').classList.add('hidden');
+            
+            // 鎖定輸入框
+            p1NameIn.disabled = true; p2NameIn.disabled = true;
+            p1ColorIn.disabled = true; p2ColorIn.disabled = true;
+
+            initGame();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop(time) {
+            if (isGameOver) return;
+            let dt = (time - lastTime) / 1000;
+            lastTime = time;
+
+            timeLeft -= dt;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                endGame();
+            }
+            
+            let tDisplay = document.getElementById('timer-display');
+            tDisplay.innerText = Math.ceil(timeLeft);
+            if (timeLeft < 10) tDisplay.style.color = '#e74c3c';
+            else tDisplay.style.color = '#fff';
+
+            for (let i = pendingSpawns.length - 1; i >= 0; i--) {
+                pendingSpawns[i].timer -= dt;
+                if (pendingSpawns[i].timer <= 0) {
+                    spawnItemImmediate(pendingSpawns[i].def);
+                    pendingSpawns.splice(i, 1);
+                }
+            }
+
+            snakes.forEach(s => s.update(dt));
+            updateUI();
+            draw();
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateUI() {
+            [0, 1].forEach(i => {
+                let s = snakes[i];
+                let pId = s.id;
+                document.getElementById(`p${pId}-lv`).innerText = s.level;
+                
+                let pct = (s.xp / s.maxXp) * 100;
+                document.getElementById(`p${pId}-bar`).style.width = pct + "%";
+                document.getElementById(`p${pId}-charges`).innerText = s.skillCharges;
+
+                let tag = document.getElementById(`p${pId}-blind-tag`);
+                if (s.blindTimer > 0) tag.classList.remove('hidden');
+                else tag.classList.add('hidden');
+            });
+        }
+
+        function draw() {
+            ctx.fillStyle = COMMON_COLORS.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            items.forEach(it => {
+                let cx = it.x * CELL_SIZE + CELL_SIZE/2;
+                let cy = it.y * CELL_SIZE + CELL_SIZE/2;
+                if (it.def.isSkill) {
+                    ctx.font = "900 24px Roboto"; 
+                    ctx.fillStyle = it.def.color;
+                    ctx.shadowBlur = 15; ctx.shadowColor = 'red';
+                    ctx.fillText("Q", cx, cy);
+                    ctx.shadowBlur = 0;
+                } else {
+                    ctx.fillStyle = it.def.color;
+                    let fontSize = 14;
+                    if(it.def.val >= 30) fontSize = 18;
+                    if(it.def.val >= 50) fontSize = 22;
+                    ctx.font = `bold ${fontSize}px Roboto`;
+                    if(it.def.val >= 30) { ctx.shadowBlur = 10; ctx.shadowColor = it.def.color; }
+                    ctx.fillText(it.def.val, cx, cy);
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            drawShadowLayer();
+
+            snakes.forEach(s => {
+                if(s.deadTimer > 0) return;
+                ctx.fillStyle = s.color;
+                s.body.forEach((b, i) => {
+                    ctx.fillRect(b.x*CELL_SIZE+1, b.y*CELL_SIZE+1, CELL_SIZE-2, CELL_SIZE-2);
+                    if (i === 0) {
+                        ctx.fillStyle = '#fff';
+                        let ex = (b.x*CELL_SIZE+CELL_SIZE/2) + s.dir.x*8;
+                        let ey = (b.y*CELL_SIZE+CELL_SIZE/2) + s.dir.y*8;
+                        ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = s.color;
+                    }
+                });
+            });
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = COMMON_COLORS.grid;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let x = 0; x <= GRID_W; x++) { ctx.moveTo(x * CELL_SIZE, 0); ctx.lineTo(x * CELL_SIZE, canvas.height); }
+            for (let y = 0; y <= GRID_H; y++) { ctx.moveTo(0, y * CELL_SIZE); ctx.lineTo(canvas.width, y * CELL_SIZE); }
+            ctx.stroke();
+        }
+
+        function drawShadowLayer() {
+            shadowCtx.clearRect(0, 0, canvas.width, canvas.height);
+            shadowCtx.globalCompositeOperation = 'source-over';
+            shadowCtx.fillStyle = COMMON_COLORS.shadow; 
+            shadowCtx.fillRect(0, 0, canvas.width, canvas.height);
+            shadowCtx.globalCompositeOperation = 'destination-out';
+
+            snakes.forEach(s => {
+                if(s.deadTimer > 0) return;
+                let head = s.body[0];
+                let cx = head.x * CELL_SIZE + CELL_SIZE/2;
+                let cy = head.y * CELL_SIZE + CELL_SIZE/2;
+                
+                let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
+                if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR; 
+                let radiusPx = radiusGrid * CELL_SIZE;
+
+                let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
+                let facingAngle = Math.atan2(s.dir.y, s.dir.x);
+                let g = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
+                
+                if (s.blindTimer > 0) {
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.9, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                } else {
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.7, 'rgba(0,0,0,0.8)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                }
+
+                shadowCtx.fillStyle = g;
+                shadowCtx.beginPath();
+                shadowCtx.moveTo(cx, cy); 
+                shadowCtx.arc(cx, cy, radiusPx, facingAngle - spreadDeg*(Math.PI/360), facingAngle + spreadDeg*(Math.PI/360));
+                shadowCtx.lineTo(cx, cy); 
+                shadowCtx.fill();
+
+                shadowCtx.fillStyle = 'rgba(0,0,0,1)';
+                shadowCtx.beginPath();
+                shadowCtx.arc(cx, cy, CELL_SIZE * 0.8, 0, Math.PI*2);
+                shadowCtx.fill();
+            });
+            ctx.drawImage(shadowCanvas, 0, 0);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            let s1 = snakes[0];
+            let s2 = snakes[1];
+            
+            let winnerId = 0; 
+            let reason = "Time Up";
+
+            if (s1.level > s2.level) { winnerId = 1; reason = "Higher Level"; } 
+            else if (s2.level > s1.level) { winnerId = 2; reason = "Higher Level"; } 
+            else {
+                if (s1.xp > s2.xp) { winnerId = 1; reason = "More XP"; } 
+                else if (s2.xp > s1.xp) { winnerId = 2; reason = "More XP"; } 
+                else {
+                    if (s1.stats.totalDist > s2.stats.totalDist) { winnerId = 1; reason = "Distance Traveled"; } 
+                    else if (s2.stats.totalDist > s1.stats.totalDist) { winnerId = 2; reason = "Distance Traveled"; } 
+                    else { winnerId = 0; reason = "Perfect Tie"; }
+                }
+            }
+
+            // 解鎖輸入框
+            p1NameIn.disabled = false; p2NameIn.disabled = false;
+            p1ColorIn.disabled = false; p2ColorIn.disabled = false;
+
+            showEndScreen(winnerId, reason, s1, s2);
+        }
+
+        function showEndScreen(wId, reason, s1, s2) {
+            let overlay = document.getElementById('overlay-screen');
+            let startContent = document.getElementById('start-content');
+            let endContent = document.getElementById('end-content');
+            
+            overlay.classList.remove('hidden');
+            startContent.classList.add('hidden');
+            endContent.classList.remove('hidden');
+
+            let titleEl = document.getElementById('winner-title');
+            let reasonEl = document.getElementById('win-reason');
+            
+            if (wId === 1) {
+                titleEl.innerText = `${s1.name} WINS!`;
+                titleEl.style.color = s1.color;
+            } else if (wId === 2) {
+                titleEl.innerText = `${s2.name} WINS!`;
+                titleEl.style.color = s2.color;
+            } else {
+                titleEl.innerText = "DRAW GAME";
+                titleEl.style.color = "#aaa";
+            }
+            reasonEl.innerText = `Victory by: ${reason}`;
+
+            let tableHtml = `
+                <div class="stat-row level-row">
+                    <div class="p1-val" style="color:${s1.color}">${s1.level}</div>
+                    <div class="stat-label">LEVEL</div>
+                    <div class="p2-val" style="color:${s2.color}">${s2.level}</div>
+                </div>
+                <div class="stat-row">
+                    <div class="p1-val" style="color:${s1.color}">${Math.floor(s1.xp)} / ${s1.maxXp}</div>
+                    <div class="stat-label">XP</div>
+                    <div class="p2-val" style="color:${s2.color}">${Math.floor(s2.xp)} / ${s2.maxXp}</div>
+                </div>
+            `;
+
+            const itemRows = [
+                {id: 'xp50', label: '50 XP', color: ITEM_COLORS.xp50},
+                {id: 'xp30', label: '30 XP', color: ITEM_COLORS.xp30},
+                {id: 'xp20', label: '20 XP', color: ITEM_COLORS.xp20},
+                {id: 'xp15', label: '15 XP', color: ITEM_COLORS.xp15},
+                {id: 'xp5', label: '5 XP', color: ITEM_COLORS.xp5},
+                {id: 'skill', label: 'Skill (Q)', color: ITEM_COLORS.skillQ}
+            ];
+
+            itemRows.forEach(row => {
+                let c1 = s1.stats.items[row.id] || 0;
+                let c2 = s2.stats.items[row.id] || 0;
+                tableHtml += `
+                    <div class="stat-row">
+                        <div class="p1-val" style="font-size:16px; color:#ccc">${c1}</div>
+                        <div class="stat-label">
+                            <span class="item-dot" style="background:${row.color}"></span> ${row.label}
+                        </div>
+                        <div class="p2-val" style="font-size:16px; color:#ccc">${c2}</div>
+                    </div>
+                `;
+            });
+
+            tableHtml += `
+                <div class="stat-row total-row">
+                    <div class="p1-val" style="color:${s1.color}">${s1.stats.totalDist}</div>
+                    <div class="stat-label">總移動距離</div>
+                    <div class="p2-val" style="color:${s2.color}">${s2.stats.totalDist}</div>
+                </div>
+            `;
+
+            document.getElementById('stat-table').innerHTML = tableHtml;
+        }
+
+        window.addEventListener('keydown', e => {
+            let isEndScreen = !document.getElementById('end-content').classList.contains('hidden');
+            let isStartScreen = !document.getElementById('start-content').classList.contains('hidden');
+            
+            // 避免在輸入框打字時觸發遊戲操作
+            if (document.activeElement.tagName === "INPUT") return;
+
+            if (isStartScreen && e.key === 'Enter') {
+                startGame(); return;
+            }
+            if (isEndScreen && (e.key === 'r' || e.key === 'R')) {
+                location.reload(); return;
+            }
+            
+            if (!isGameOver && !isStartScreen) {
+                // P1
+                if (e.key === 'w' && snakes[0].dir.y === 0) snakes[0].nextDir = {x: 0, y: -1};
+                if (e.key === 's' && snakes[0].dir.y === 0) snakes[0].nextDir = {x: 0, y: 1};
+                if (e.key === 'a' && snakes[0].dir.x === 0) snakes[0].nextDir = {x: -1, y: 0};
+                if (e.key === 'd' && snakes[0].dir.x === 0) snakes[0].nextDir = {x: 1, y: 0};
+                if ((e.key === 'q' || e.key === 'Q')) snakes[0].useSkill(snakes[1]);
+
+                // P2
+                if (e.key === 'ArrowUp' && snakes[1].dir.y === 0) snakes[1].nextDir = {x: 0, y: -1};
+                if (e.key === 'ArrowDown' && snakes[1].dir.y === 0) snakes[1].nextDir = {x: 0, y: 1};
+                if (e.key === 'ArrowLeft' && snakes[1].dir.x === 0) snakes[1].nextDir = {x: -1, y: 0};
+                if (e.key === 'ArrowRight' && snakes[1].dir.x === 0) snakes[1].nextDir = {x: 1, y: 0};
+                if (e.key === 'Enter') snakes[1].useSkill(snakes[0]);
+            }
+        });
+
+        window.addEventListener('resize', () => { if(!isGameOver) resize(); });
+    </script>
+</body>
+</html>
