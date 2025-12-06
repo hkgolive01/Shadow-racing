@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Shadow Racing - AI Handicap</title>
+    <title>Shadow Racing - Body Visibility Fix</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=sans-serif:wght@400;700;900&family=Roboto:wght@400;700;900&display=swap');
 
@@ -135,7 +136,6 @@
             border-radius: 50%;
         }
 
-        /* --- AI Switch Style --- */
         .ai-label {
             display: flex;
             align-items: center;
@@ -149,13 +149,12 @@
             border-radius: 4px;
             transition: 0.2s;
         }
-        
+
         .ai-label:hover {
             border-color: #666;
             color: #fff;
         }
 
-        /* 用於遊戲開始後隱藏 */
         .ai-hidden {
             display: none !important;
         }
@@ -164,7 +163,6 @@
             cursor: pointer;
         }
 
-        /* --- 數據顯示區 --- */
         .stats-row-composite {
             display: flex;
             align-items: baseline;
@@ -226,7 +224,6 @@
             transition: opacity 0.3s;
         }
 
-        /* 狀態標籤 */
         .status-badge {
             padding: 1px 4px;
             border-radius: 2px;
@@ -270,7 +267,6 @@
             100% { box-shadow: 0 0 5px #0055ff; }
         }
 
-        /* --- GAME AREA --- */
         #game-area {
             flex-grow: 1;
             position: relative;
@@ -291,7 +287,6 @@
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
-        /* --- OVERLAY SCREENS --- */
         #overlay-screen {
             position: absolute;
             top: 0;
@@ -305,6 +300,7 @@
             align-items: center;
             z-index: 100;
             transition: opacity 0.3s;
+            overflow-y: auto;
         }
 
         #start-content,
@@ -313,6 +309,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+            padding: 20px 0;
         }
 
         h1 {
@@ -328,16 +325,31 @@
             text-indent: 5px;
         }
 
+        #capture-target {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 950px;
+            background: #0b0b0b;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
         .content-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 30px 40px;
             border-radius: 12px;
             border: 1px solid #333;
-            max-width: 950px;
-            width: 90%;
+            width: 100%;
             text-align: left;
-            max-height: 80vh;
-            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        
+        #start-content .content-box {
+            max-width: 950px;
+            margin-bottom: 20px;
         }
 
         .rule-title {
@@ -369,10 +381,10 @@
             line-height: 1.4;
         }
 
-        /* --- 結算表樣式 --- */
         .result-header {
             text-align: center;
             margin-bottom: 20px;
+            width: 100%;
         }
 
         .winner-announce {
@@ -469,40 +481,63 @@
             border-radius: 50%;
         }
 
+        .btn-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
         .btn {
-            margin-top: 20px;
-            padding: 15px 60px;
-            font-size: 24px;
+            margin: 10px;
+            padding: 15px 40px;
+            font-size: 20px;
             font-family: 'Roboto', sans-serif;
             background: transparent;
             color: #2ecc71;
             border: 2px solid #2ecc71;
             cursor: pointer;
             transition: 0.2s;
-            animation: pulse 2s infinite;
+            border-radius: 5px;
         }
 
         .btn:hover {
             background: #2ecc71;
             color: #000;
-            box-shadow: 0 0 30px #2ecc71;
+            box-shadow: 0 0 20px #2ecc71;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+        .btn-blue {
+            color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-blue:hover {
+            background: #3498db;
+            color: #fff;
+            box-shadow: 0 0 20px #3498db;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* 滾動條樣式 */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        #chart-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #chartCanvas {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -582,12 +617,12 @@
                 <div class="content-box">
                     <div class="rule-title">道具與規則</div>
                     <div class="rule-row"><span class="icon">🔢</span><span
-                            class="desc">吃掉數字增加經驗。<strong>每升一級，視野增加，移動速度提升！</strong></span></div>
+                            class="desc">吃掉數字增加經驗。<strong>每升一級，視野增加，移動速度提升，長度增加！</strong></span></div>
                     <div class="rule-row"><span class="icon" style="color:red; font-weight:bold">Q</span><span
                             class="desc">獲得致盲技能 (對手視野剩 40% / 3秒)。<strong>AI 獲得後會自動施放。</strong></span></div>
                     <div class="rule-row"><span class="icon"
                             style="color:#00ffff; font-weight:bold; text-shadow:0 0 5px #0055ff">E</span><span
-                            class="desc"><strong>XP BOOST：</strong> 獲得額外 50% 經驗值 (持續 5 秒)。</span></div>
+                            class="desc"><strong>XP BOOST：</strong> 獲得額外 50% 經驗值 (持續 5 秒)，<strong>並發出自身顏色的光芒</strong>。AI 將優先爭奪此道具！</span></div>
                     <div class="rule-row"><span class="icon" style="font-size:20px">🔄</span><span
                             class="desc"><strong>混亂對手：</strong> 讓對手<strong>強制 90 度轉向</strong> (隨機)。</span></div>
 
@@ -602,17 +637,25 @@
             </div>
 
             <div id="end-content" class="hidden">
-                <div class="result-header">
-                    <div id="winner-title" class="winner-announce">PLAYER 1 WINS!</div>
-                    <div id="win-reason" class="reason-text">Higher Level</div>
-                </div>
+                <div id="capture-target">
+                    <div class="result-header">
+                        <div id="winner-title" class="winner-announce">PLAYER 1 WINS!</div>
+                        <div id="win-reason" class="reason-text">Higher Level</div>
+                        <div id="map-size-info" style="color:#666; font-size:14px; margin-top:5px;">MAP: 0x0</div>
+                    </div>
 
-                <div class="content-box">
-                    <div class="stat-grid" id="stat-table">
+                    <div class="content-box">
+                        <div class="stat-grid" id="stat-table">
+                        </div>
+                        
+                        <div id="chart-container">
+                            <canvas id="chartCanvas"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div style="text-align:center">
+                <div class="btn-container">
+                    <button class="btn btn-blue" onclick="captureScreenshot()">📷 Screenshot to Clipboard</button>
                     <button class="btn" onclick="location.reload()">RESTART (R)</button>
                 </div>
             </div>
@@ -640,7 +683,7 @@
         const VISION_PER_LV_ANGLE = 8;
         const BLIND_FACTOR = 0.4;
         
-        // AI 讓賽秒數
+        // AI 讓賽秒數：45 秒
         const AI_HANDICAP_SECONDS = 45;
 
         // 顏色管理
@@ -663,6 +706,14 @@
         let snakes = [];
         let items = [];
         let pendingSpawns = [];
+        
+        // 記錄數據用於圖表
+        let xpHistory = {
+            times: [],
+            p1: [],
+            p2: []
+        };
+        let historyTimer = 0;
 
         const ITEM_CONFIG = [
             { id: 'xp5', val: 5, count: 60, color: ITEM_COLORS.xp5, type: 'xp', delay: 0 },
@@ -706,12 +757,25 @@
         p2ColorIn.addEventListener('input', updatePanelStyles);
         updatePanelStyles();
 
+        // 輔助功能：Hex 轉 RGBA
+        function hexToRgba(hex, alpha) {
+            // 移除 #
+            hex = hex.replace('#', '');
+            if (hex.length === 3) {
+                hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+            }
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
         class Snake {
             constructor(id, name, x, y, dirX, dirY, color, isAI) {
                 this.id = id;
                 this.name = name;
                 this.color = color;
-                this.isAI = isAI; // 是否為 AI
+                this.isAI = isAI; 
                 this.body = [{ x, y }];
                 this.dir = { x: dirX, y: dirY };
                 this.nextDir = { x: dirX, y: dirY };
@@ -719,6 +783,7 @@
                 this.xp = 0;
                 this.maxXp = 100;
                 this.level = 1;
+                this.totalAccumulatedXp = 0; 
 
                 this.moveAcc = 0;
                 this.currentSpeedThreshold = SPEED_BASE_THRESHOLD;
@@ -733,7 +798,6 @@
                 // AI 讓賽計時器
                 this.startDelay = 0;
 
-                // 初始化所有可能的道具統計
                 this.stats = {
                     totalDist: 0,
                     items: {
@@ -782,58 +846,45 @@
                 this.dir = { x: newX, y: newY };
             }
 
-            // --- 智能 AI 邏輯 ---
             thinkAI() {
                 const head = this.body[0];
-                
-                // 1. 計算目前的視野範圍 (Grid 單位)
                 let radiusGrid = VISION_BASE_DIST + (this.level - 1) * VISION_PER_LV_DIST;
                 if (this.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
 
-                // 2. 尋找視野內的所有道具
-                // AI 只能看到距離 <= radiusGrid 的道具
                 let visibleItems = items.filter(it => {
                     let dx = it.x - head.x;
                     let dy = it.y - head.y;
-                    // 使用歐幾里得距離
                     return Math.sqrt(dx * dx + dy * dy) <= radiusGrid;
                 });
 
                 let target = null;
                 if (visibleItems.length > 0) {
-                    // 找出最近的道具
                     visibleItems.sort((a, b) => {
-                        let da = Math.abs(a.x - head.x) + Math.abs(a.y - head.y);
-                        let db = Math.abs(b.x - head.x) + Math.abs(b.y - head.y);
-                        return da - db;
+                        let distA = Math.abs(a.x - head.x) + Math.abs(a.y - head.y);
+                        let distB = Math.abs(b.x - head.x) + Math.abs(b.y - head.y);
+                        let weightA = distA - (a.def.type === 'buffE' ? 1000 : 0);
+                        let weightB = distB - (b.def.type === 'buffE' ? 1000 : 0);
+                        return weightA - weightB;
                     });
                     target = visibleItems[0];
                 }
 
-                // 3. 評估可行移動方向
                 const moves = [
                     { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }
                 ];
 
-                // 過濾掉撞牆和 180 度回頭
                 const safeMoves = moves.filter(m => {
-                    // 不能回頭
                     if (m.x === -this.dir.x && m.y === -this.dir.y) return false;
-                    
                     const nx = head.x + m.x;
                     const ny = head.y + m.y;
-                    // 不能撞牆
                     if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return false;
-                    
+                    if (this.body.some(b => b.x === nx && b.y === ny)) return false;
                     return true;
                 });
 
-                if (safeMoves.length === 0) return; // 沒路走，等死
+                if (safeMoves.length === 0) return; 
 
-                // 4. 決策
                 if (target) {
-                    // 如果有目標，選擇能縮短與目標距離的移動
-                    // 對每個安全移動進行評分 (距離越小越好)
                     safeMoves.sort((a, b) => {
                         let posA = { x: head.x + a.x, y: head.y + a.y };
                         let posB = { x: head.x + b.x, y: head.y + b.y };
@@ -843,20 +894,16 @@
                     });
                     this.nextDir = safeMoves[0];
                 } else {
-                    // 如果沒有目標 (隨機遊走模式)
-                    // 優先保持直走 (避免原地打轉)
                     const straightMove = safeMoves.find(m => m.x === this.dir.x && m.y === this.dir.y);
-                    if (straightMove && Math.random() > 0.15) { // 85% 機率直走
+                    if (straightMove && Math.random() > 0.15) { 
                         this.nextDir = straightMove;
                     } else {
-                        // 隨機轉向
                         this.nextDir = safeMoves[Math.floor(Math.random() * safeMoves.length)];
                     }
                 }
             }
 
             tryAutoCastSkill() {
-                // 尋找對手並施放
                 const opponent = snakes.find(s => s.id !== this.id);
                 if (opponent && opponent.deadTimer <= 0) {
                     this.useSkill(opponent);
@@ -870,14 +917,12 @@
                     return;
                 }
                 
-                // --- 處理 AI 讓賽 ---
                 if (this.startDelay > 0) {
                     this.startDelay -= dt;
                     if (this.startDelay <= 0) {
                         this.startDelay = 0;
                         showMsg(this.id, "AI STARTED!");
                     } else {
-                        // 讓賽期間，不累積移動條，直接返回
                         return;
                     }
                 }
@@ -895,7 +940,6 @@
 
                 this.moveAcc += dt * 1000;
                 if (this.moveAcc >= this.currentSpeedThreshold) {
-                    // 在移動前，如果是 AI，進行思考
                     if (this.isAI) {
                         this.thinkAI();
                     }
@@ -906,7 +950,6 @@
             }
 
             move() {
-                // 確保轉向發生
                 if (this.nextDir.x !== -this.dir.x && this.nextDir.y !== -this.dir.y) {
                     this.dir = this.nextDir;
                 }
@@ -915,12 +958,14 @@
                 let nx = head.x + this.dir.x;
                 let ny = head.y + this.dir.y;
 
-                // 1. 邊界檢查 (撞牆死)
                 if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
                     this.respawn(); return;
                 }
 
-                // *移除* 撞蛇檢查 (蛇身重疊不死亡)
+                // 自撞判定
+                if (this.body.some(b => b.x === nx && b.y === ny)) {
+                    this.respawn(); return;
+                }
 
                 let newHead = { x: nx, y: ny };
                 this.stats.totalDist++;
@@ -937,10 +982,9 @@
                     } else if (cfg.type === 'skill') {
                         this.skillCharges++;
                         showMsg(this.id, "GOT SKILL!");
-                        // AI 自動施放檢查
                         if (this.isAI) this.tryAutoCastSkill();
                     } else if (cfg.type === 'buffE') {
-                        this.xpBoostTimer = 5.0; // 重置 Buff 時間
+                        this.xpBoostTimer = 5.0;
                         this.xpMultiplier = 1.5;
                         showMsg(this.id, "XP x1.5!");
                     } else if (cfg.type === 'chaos') {
@@ -957,13 +1001,16 @@
                 }
 
                 this.body.unshift(newHead);
-                let targetLen = 3 + Math.floor(this.level / 2);
+                //基礎長度為 3，加上等級
+                let targetLen = 3 + this.level;
+                
                 while (this.body.length > targetLen) this.body.pop();
             }
 
             gainXP(amount) {
                 let finalXp = amount * this.xpMultiplier;
                 this.xp += finalXp;
+                this.totalAccumulatedXp += finalXp; 
 
                 while (this.xp >= this.maxXp) {
                     this.xp -= this.maxXp;
@@ -973,7 +1020,6 @@
                     this.currentSpeedThreshold = this.currentSpeedThreshold / SPEED_INCREASE_FACTOR;
                     showMsg(this.id, "LEVEL UP!");
                     
-                    // AI 升級獲得技能，自動施放檢查
                     if (this.isAI) this.tryAutoCastSkill();
                 }
             }
@@ -1037,29 +1083,19 @@
             let p1c = p1ColorIn.value;
             let p2c = p2ColorIn.value;
             
-            // 讀取 AI 開關狀態
             let p1IsAi = p1AiToggle.checked;
             let p2IsAi = p2AiToggle.checked;
             
-            // 判斷是否為「人 vs AI」對局 (XOR)
             let isMixedMatch = (p1IsAi !== p2IsAi);
 
-            // 強制 AI 名字為 "AI"
-            if(p1IsAi) {
-                p1Name = "AI";
-                p1NameIn.value = "AI"; 
-            }
-            if(p2IsAi) {
-                p2Name = "AI";
-                p2NameIn.value = "AI"; 
-            }
+            if(p1IsAi) { p1Name = "AI"; p1NameIn.value = "AI"; }
+            if(p2IsAi) { p2Name = "AI"; p2NameIn.value = "AI"; }
 
             snakes = [
                 new Snake(1, p1Name, 3, centerY, 1, 0, p1c, p1IsAi),
                 new Snake(2, p2Name, GRID_W - 4, centerY, -1, 0, p2c, p2IsAi)
             ];
             
-            // 如果是混合對局，賦予 AI 延遲
             if (isMixedMatch) {
                 if (p1IsAi) snakes[0].startDelay = AI_HANDICAP_SECONDS;
                 if (p2IsAi) snakes[1].startDelay = AI_HANDICAP_SECONDS;
@@ -1067,6 +1103,13 @@
 
             items = [];
             pendingSpawns = [];
+            
+            xpHistory = { times: [], p1: [], p2: [] };
+            historyTimer = 0;
+            xpHistory.times.push(0);
+            xpHistory.p1.push(0);
+            xpHistory.p2.push(0);
+
             timeLeft = GAME_DURATION;
             isGameOver = false;
 
@@ -1094,7 +1137,6 @@
             p1NameIn.disabled = true; p2NameIn.disabled = true;
             p1ColorIn.disabled = true; p2ColorIn.disabled = true;
             
-            // 隱藏 AI 勾選框
             document.getElementById('p1-ai-label').classList.add('ai-hidden');
             document.getElementById('p2-ai-label').classList.add('ai-hidden');
 
@@ -1108,8 +1150,22 @@
             lastTime = time;
 
             timeLeft -= dt;
+            
+            historyTimer += dt;
+            if (historyTimer >= 1.0) {
+                historyTimer = 0;
+                let elapsed = GAME_DURATION - timeLeft;
+                if (elapsed < 0) elapsed = 0;
+                xpHistory.times.push(elapsed);
+                xpHistory.p1.push(snakes[0].totalAccumulatedXp);
+                xpHistory.p2.push(snakes[1].totalAccumulatedXp);
+            }
+
             if (timeLeft <= 0) {
                 timeLeft = 0;
+                xpHistory.times.push(90);
+                xpHistory.p1.push(snakes[0].totalAccumulatedXp);
+                xpHistory.p2.push(snakes[1].totalAccumulatedXp);
                 endGame();
             }
 
@@ -1150,7 +1206,6 @@
                 if (s.xpBoostTimer > 0) boostTag.classList.remove('hidden');
                 else boostTag.classList.add('hidden');
                 
-                // 顯示 Waiting Tag
                 let waitTag = document.getElementById(`p${pId}-wait-tag`);
                 if (s.startDelay > 0) {
                     waitTag.classList.remove('hidden');
@@ -1165,6 +1220,32 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawGrid();
 
+            // 1. 地板視野 (淺紅色)
+            ctx.save();
+            snakes.forEach(s => {
+                if (s.deadTimer > 0) return;
+                
+                let head = s.body[0];
+                let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
+                let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
+                let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
+                if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
+                if (s.startDelay > 0) radiusGrid = 2.0;
+                let radiusPx = radiusGrid * CELL_SIZE;
+                let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
+                let facingAngle = Math.atan2(s.dir.y, s.dir.x);
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
+                ctx.lineTo(cx, cy);
+                
+                ctx.fillStyle = 'rgba(255, 50, 50, 0.15)'; 
+                ctx.fill();
+            });
+            ctx.restore();
+
+            // 2. 道具
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             items.forEach(it => {
@@ -1200,13 +1281,11 @@
                 ctx.shadowBlur = 0;
             });
 
-            drawShadowLayer();
-
+            // 3. 蛇
             snakes.forEach(s => {
                 if (s.deadTimer > 0) return;
                 ctx.fillStyle = s.color;
                 
-                // 讓賽期間稍微變暗
                 if (s.startDelay > 0) ctx.globalAlpha = 0.5;
 
                 if (s.xpBoostTimer > 0) {
@@ -1229,7 +1308,6 @@
                 ctx.shadowBlur = 0;
                 ctx.globalAlpha = 1.0;
                 
-                // 繪製頭頂倒數文字
                 if (s.startDelay > 0) {
                      let head = s.body[0];
                      let hx = head.x * CELL_SIZE + CELL_SIZE / 2;
@@ -1239,6 +1317,9 @@
                      ctx.fillText(`${Math.ceil(s.startDelay)}`, hx, hy);
                 }
             });
+
+            // 4. 陰影層
+            drawShadowLayer();
         }
 
         function drawGrid() {
@@ -1258,9 +1339,11 @@
 
         function drawShadowLayer() {
             shadowCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
             shadowCtx.globalCompositeOperation = 'source-over';
             shadowCtx.fillStyle = COMMON_COLORS.shadow;
             shadowCtx.fillRect(0, 0, canvas.width, canvas.height);
+
             shadowCtx.globalCompositeOperation = 'destination-out';
 
             snakes.forEach(s => {
@@ -1271,20 +1354,21 @@
 
                 let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
                 if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
-                
-                // 讓賽期間視野縮小，以示區別
                 if (s.startDelay > 0) radiusGrid = 2.0;
-                
                 let radiusPx = radiusGrid * CELL_SIZE;
 
                 let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
                 let facingAngle = Math.atan2(s.dir.y, s.dir.x);
+                
                 let g = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
-
                 if (s.blindTimer > 0) {
-                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.9, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); 
+                    g.addColorStop(0.9, 'rgba(0,0,0,1)'); 
+                    g.addColorStop(1, 'rgba(0,0,0,0)');
                 } else {
-                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.7, 'rgba(0,0,0,0.8)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); 
+                    g.addColorStop(0.7, 'rgba(0,0,0,0.8)'); 
+                    g.addColorStop(1, 'rgba(0,0,0,0)');
                 }
 
                 shadowCtx.fillStyle = g;
@@ -1294,12 +1378,79 @@
                 shadowCtx.lineTo(cx, cy);
                 shadowCtx.fill();
 
+                // === 關鍵修正：讓蛇的身體每一節都挖空陰影 ===
                 shadowCtx.fillStyle = 'rgba(0,0,0,1)';
-                shadowCtx.beginPath();
-                shadowCtx.arc(cx, cy, CELL_SIZE * 0.8, 0, Math.PI * 2);
-                shadowCtx.fill();
+                s.body.forEach(part => {
+                    let px = part.x * CELL_SIZE + CELL_SIZE / 2;
+                    let py = part.y * CELL_SIZE + CELL_SIZE / 2;
+                    shadowCtx.beginPath();
+                    shadowCtx.arc(px, py, CELL_SIZE * 0.7, 0, Math.PI * 2); // 挖空身體周圍
+                    shadowCtx.fill();
+                });
+
+                // --- 吃到 E 時的全方位視野挖空 ---
+                if (s.xpBoostTimer > 0) {
+                    let glowR = 6 * CELL_SIZE; 
+                    let g2 = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+                    g2.addColorStop(0, 'rgba(0,0,0,1)');
+                    g2.addColorStop(1, 'rgba(0,0,0,0)');
+                    shadowCtx.fillStyle = g2;
+                    shadowCtx.beginPath();
+                    shadowCtx.arc(cx, cy, glowR, 0, Math.PI * 2);
+                    shadowCtx.fill();
+                }
             });
+
             ctx.drawImage(shadowCanvas, 0, 0);
+
+            // 5. 光暈渲染
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen'; 
+            
+            snakes.forEach(s => {
+                if (s.deadTimer > 0) return;
+                let head = s.body[0];
+                let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
+                let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
+                
+                let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
+                if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
+                if (s.startDelay > 0) radiusGrid = 2.0;
+                let radiusPx = radiusGrid * CELL_SIZE;
+
+                let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
+                let facingAngle = Math.atan2(s.dir.y, s.dir.x);
+
+                // A. 橙色手電筒光
+                let lightG = ctx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
+                lightG.addColorStop(0, 'rgba(255, 160, 40, 0.4)'); 
+                lightG.addColorStop(0.6, 'rgba(255, 120, 0, 0.1)'); 
+                lightG.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                ctx.fillStyle = lightG;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
+                ctx.lineTo(cx, cy);
+                ctx.fill();
+
+                // B. E 道具光暈 (跟隨蛇顏色)
+                if (s.xpBoostTimer > 0) {
+                    let glowR = 6 * CELL_SIZE;
+                    let buffG = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+                    // 使用 s.color
+                    let cRgbaMid = hexToRgba(s.color, 0.4);
+                    let cRgbaEnd = hexToRgba(s.color, 0);
+
+                    buffG.addColorStop(0, cRgbaMid);
+                    buffG.addColorStop(1, cRgbaEnd);
+                    ctx.fillStyle = buffG;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            ctx.restore();
         }
 
         function endGame() {
@@ -1325,7 +1476,6 @@
             p1NameIn.disabled = false; p2NameIn.disabled = false;
             p1ColorIn.disabled = false; p2ColorIn.disabled = false;
 
-            // 遊戲結束顯示 AI 勾選框
             document.getElementById('p1-ai-label').classList.remove('ai-hidden');
             document.getElementById('p2-ai-label').classList.remove('ai-hidden');
 
@@ -1343,6 +1493,7 @@
 
             let titleEl = document.getElementById('winner-title');
             let reasonEl = document.getElementById('win-reason');
+            let mapSizeEl = document.getElementById('map-size-info');
 
             if (wId === 1) {
                 titleEl.innerText = `${s1.name} WINS!`;
@@ -1355,6 +1506,7 @@
                 titleEl.style.color = "#aaa";
             }
             reasonEl.innerText = `Victory by: ${reason}`;
+            mapSizeEl.innerText = `MAP SIZE: ${GRID_W} x ${GRID_H}`;
 
             let tableHtml = `
                 <div class="stat-row level-row">
@@ -1403,6 +1555,108 @@
             `;
 
             document.getElementById('stat-table').innerHTML = tableHtml;
+
+            drawChart(s1.color, s2.color);
+        }
+
+        function drawChart(c1, c2) {
+            const chartC = document.getElementById('chartCanvas');
+            chartC.width = chartC.clientWidth;
+            chartC.height = chartC.clientHeight;
+            const cCtx = chartC.getContext('2d');
+            const w = chartC.width;
+            const h = chartC.height;
+            const padLeft = 40;
+            const padBottom = 30;
+            const padTop = 20;
+            const padRight = 20;
+
+            cCtx.clearRect(0,0,w,h);
+            
+            let realMax = 0;
+            xpHistory.p1.forEach(v => { if(v > realMax) realMax = v; });
+            xpHistory.p2.forEach(v => { if(v > realMax) realMax = v; });
+            
+            let maxY = Math.max(realMax, 500);
+            maxY = Math.ceil(maxY / 500) * 500; 
+
+            cCtx.font = '10px sans-serif';
+            cCtx.fillStyle = '#666';
+            cCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            cCtx.lineWidth = 1;
+
+            for (let t = 0; t <= 90; t += 15) {
+                let x = padLeft + (t / 90) * (w - padLeft - padRight);
+                cCtx.beginPath();
+                cCtx.moveTo(x, padTop);
+                cCtx.lineTo(x, h - padBottom);
+                cCtx.stroke();
+                
+                cCtx.textAlign = 'center';
+                cCtx.fillText(t + 's', x, h - padBottom + 15);
+            }
+
+            for (let xp = 0; xp <= maxY; xp += 500) {
+                let y = (h - padBottom) - (xp / maxY) * (h - padBottom - padTop);
+                cCtx.beginPath();
+                cCtx.moveTo(padLeft, y);
+                cCtx.lineTo(w - padRight, y);
+                cCtx.stroke();
+                
+                cCtx.textAlign = 'right';
+                cCtx.fillText(xp, padLeft - 5, y + 3);
+            }
+
+            cCtx.strokeStyle = '#888';
+            cCtx.lineWidth = 2;
+            cCtx.beginPath();
+            cCtx.moveTo(padLeft, padTop);
+            cCtx.lineTo(padLeft, h - padBottom); 
+            cCtx.lineTo(w - padRight, h - padBottom);
+            cCtx.stroke();
+            
+            function drawLine(data, color) {
+                cCtx.beginPath();
+                cCtx.strokeStyle = color;
+                cCtx.lineWidth = 2;
+                for(let i=0; i<xpHistory.times.length; i++) {
+                    let t = xpHistory.times[i];
+                    let val = data[i];
+                    
+                    let x = padLeft + (t / 90) * (w - padLeft - padRight);
+                    let y = (h - padBottom) - (val / maxY) * (h - padBottom - padTop);
+                    
+                    if (i === 0) cCtx.moveTo(x, y);
+                    else cCtx.lineTo(x, y);
+                }
+                cCtx.stroke();
+            }
+
+            drawLine(xpHistory.p1, c1);
+            drawLine(xpHistory.p2, c2);
+        }
+
+        function captureScreenshot() {
+            const el = document.querySelector("#capture-target");
+            
+            html2canvas(el, {
+                backgroundColor: "#0b0b0b",
+                scale: 2
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    try {
+                        const item = new ClipboardItem({ "image/png": blob });
+                        navigator.clipboard.write([item]).then(() => {
+                            alert("Screenshot copied to clipboard!");
+                        }).catch(err => {
+                            console.error(err);
+                            alert("Failed to copy. (Browser security may block clipboard access on non-https pages).");
+                        });
+                    } catch (e) {
+                        alert("Your browser does not support ClipboardItem API.");
+                    }
+                });
+            });
         }
 
         window.addEventListener('keydown', e => {
