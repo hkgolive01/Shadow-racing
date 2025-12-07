@@ -332,8 +332,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 96%;
-            max-width: none;
+            width: 96%; /* FULL WIDTH UPDATE */
+            max-width: none; /* REMOVE LIMIT */
             background: #0b0b0b;
             padding: 30px;
             border-radius: 10px;
@@ -351,11 +351,10 @@
             box-sizing: border-box;
         }
 
-#start-content .content-box {
-    width: 96%;       /* 設定寬度佔螢幕 96% */
-    max-width: none;  /* 移除最大寬度限制 */
-    margin-bottom: 20px;
-}
+        #start-content .content-box {
+            max-width: 950px;
+            margin-bottom: 20px;
+        }
 
         .rule-title {
             color: #f1c40f;
@@ -419,7 +418,7 @@
         }
 
         .winner-announce {
-            font-size: 72px;
+            font-size: 72px; /* INCREASED */
             font-weight: 900;
             font-family: 'sans-serif';
             margin-bottom: 10px;
@@ -428,7 +427,7 @@
 
         .reason-text {
             color: #aaa;
-            font-size: 28px;
+            font-size: 28px; /* INCREASED */
             margin-bottom: 20px;
             font-style: italic;
         }
@@ -445,7 +444,7 @@
             grid-template-columns: 1fr 200px 1fr;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 0;
+            padding: 10px 0; /* INCREASED PADDING */
             transition: background 0.2s;
         }
 
@@ -456,7 +455,7 @@
         .stat-label {
             color: #888;
             text-align: center;
-            font-size: 20px;
+            font-size: 20px; /* INCREASED */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -468,7 +467,7 @@
             font-family: 'sans-serif';
             font-weight: bold;
             text-align: center;
-            font-size: 24px;
+            font-size: 24px; /* INCREASED */
         }
 
         .level-row {
@@ -477,11 +476,11 @@
             margin-bottom: 15px;
         }
         .level-row .p1-val, .level-row .p2-val {
-            font-size: 5rem;
+            font-size: 5rem; /* INCREASED */
             text-shadow: 0 0 20px currentColor;
         }
         .level-row .stat-label {
-            font-size: 2rem;
+            font-size: 2rem; /* INCREASED */
             color: #fff;
             font-weight: bold;
         }
@@ -493,7 +492,7 @@
             padding-top: 20px;
         }
         .total-row .stat-label, .total-row .p1-val, .total-row .p2-val {
-            font-size: 24px;
+            font-size: 24px; /* INCREASED */
             color: #fff;
         }
 
@@ -546,40 +545,39 @@
         #chartCanvas { width: 100%; height: 100%; }
 
         /* Segment Table Styles */
-        #segment-analysis, #leaderboard-section, #leaderboard-section-start {
+        #segment-analysis, #leaderboard-section {
             width: 100%;
             margin-top: 40px;
         }
         
         .section-title {
             color: #f1c40f;
-            font-size: 24px;
+            font-size: 24px; /* INCREASED */
             font-weight: bold;
             margin-bottom: 15px;
             border-left: 6px solid #f1c40f;
             padding-left: 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
         }
 
         .analysis-table, .lb-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 18px;
+            font-size: 18px; /* INCREASED */
             text-align: center;
         }
         .analysis-table th, .analysis-table td,
         .lb-table th, .lb-table td {
             border: 1px solid #333;
-            padding: 12px 8px;
+            padding: 12px 8px; /* INCREASED */
             color: #ccc;
         }
         .analysis-table th, .lb-table th {
             background: rgba(255,255,255,0.05);
             color: #fff;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 20px; /* INCREASED */
         }
         .win-seg { color: #2ecc71; font-weight: bold; }
         .lose-seg { color: #e74c3c; }
@@ -605,7 +603,7 @@
             color: #ccc;
             margin-bottom: 12px;
             text-transform: uppercase;
-            font-size: 18px;
+            font-size: 18px; /* INCREASED */
             border-bottom: 1px solid #444;
             padding-bottom: 8px;
         }
@@ -614,7 +612,7 @@
         .lb-header.pve { color: #f39c12; }
         .lb-header.aivai { color: #e74c3c; }
         
-        .lb-table { font-size: 14px; }
+        .lb-table { font-size: 14px; } /* Slightly larger than before */
         .lb-table th, .lb-table td { padding: 6px 4px; }
         
         .lb-rank { width: 30px; color: #888; font-size: 16px; }
@@ -737,60 +735,6 @@
                             style="color:#e67e22"><strong>人機對戰規則：</strong> 若一方為人類，一方為 AI，<strong>AI 將會讓賽 45
                                 秒（原地靜止）</strong>。</span></div>
                 </div>
-                
-              <div id="leaderboard-section-start" style="width: 96%; max-width: none; margin-bottom: 20px;">     <div class="section-title">
-                        30x12 模式排行榜 (TOP 10) 
-                        <button onclick="clearLeaderboard()" class="btn-red-sm">🗑️ 清除記錄</button>
-                    </div>
-                    <div class="lb-container">
-                        <div class="lb-box">
-                            <div class="lb-header pvp">⚔️ PvP (人人)</div>
-                            <table class="lb-table">
-                                <thead>
-                                    <tr>
-                                        <th class="lb-rank">#</th>
-                                        <th class="lb-name">Name</th>
-                                        <th>Total</th>
-                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
-                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lb-pvp-body-start"></tbody>
-                            </table>
-                        </div>
-                        <div class="lb-box">
-                            <div class="lb-header pve">🤖 PvE (人機)</div>
-                            <table class="lb-table">
-                                <thead>
-                                    <tr>
-                                        <th class="lb-rank">#</th>
-                                        <th class="lb-name">Name</th>
-                                        <th>Total</th>
-                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
-                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lb-pve-body-start"></tbody>
-                            </table>
-                        </div>
-                        <div class="lb-box">
-                            <div class="lb-header aivai">💻 AIvAI (機機)</div>
-                            <table class="lb-table">
-                                <thead>
-                                    <tr>
-                                        <th class="lb-rank">#</th>
-                                        <th class="lb-name">Name</th>
-                                        <th>Total</th>
-                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
-                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lb-aivai-body-start"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
                 <div style="text-align:center"><button class="btn" onclick="startGame()">START GAME (Enter)</button>
                 </div>
             </div>
@@ -961,6 +905,7 @@
         function updatePanelStyles() {
             P1_COLOR = p1ColorIn.value;
             P2_COLOR = p2ColorIn.value;
+
             document.querySelector('.p1-info').style.borderColor = P1_COLOR;
             document.querySelector('.p1-info').style.color = P1_COLOR;
             document.getElementById('p1-msg').style.color = P1_COLOR;
@@ -972,6 +917,7 @@
             document.getElementById('p1-bar').style.backgroundColor = P1_COLOR;
             document.getElementById('p2-bar').style.backgroundColor = P2_COLOR;
         }
+
         p1ColorIn.addEventListener('input', updatePanelStyles);
         p2ColorIn.addEventListener('input', updatePanelStyles);
         updatePanelStyles();
@@ -982,57 +928,40 @@
             let r = parseInt(hex.substring(0, 2), 16);
             let g = parseInt(hex.substring(2, 4), 16);
             let b = parseInt(hex.substring(4, 6), 16);
-            return `rgba(${r},${g},${b},${alpha})`;
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
         class Snake {
-            constructor(id, name, startX, startY, dirX, dirY, color, isAI) {
-                this.id = id;
-                this.name = name;
-                this.body = [];
-                for (let i = 0; i < 3; i++) this.body.push({ x: startX - dirX * i, y: startY - dirY * i });
+            constructor(id, name, x, y, dirX, dirY, color, isAI) {
+                this.id = id; this.name = name; this.color = color; this.isAI = isAI;
+                this.body = [{ x, y }];
                 this.dir = { x: dirX, y: dirY };
                 this.nextDir = { x: dirX, y: dirY };
-                this.color = color;
-                this.level = 1;
-                this.xp = 0;
-                this.maxXp = 100;
-                this.totalAccumulatedXp = 0;
-                this.skillCharges = 0;
-                this.moveTimer = 0;
-                this.currentSpeedThreshold = SPEED_BASE_THRESHOLD;
-                this.isAI = isAI;
-
-                // 狀態
-                this.blindTimer = 0;
-                this.xpBoostTimer = 0;
-                this.xpMultiplier = 1.0;
-                this.startDelay = 0; // AI讓賽延遲
-                this.deadTimer = 0; // 死亡懲罰 (撞牆後重生)
-
-                this.stats = { totalDist: 0, itemsCollected: 0, kills: 0, deaths: 0, skillUsed: 0 };
+                this.xp = 0; this.maxXp = 100; this.level = 1; this.totalAccumulatedXp = 0;
+                this.moveAcc = 0; this.currentSpeedThreshold = SPEED_BASE_THRESHOLD;
+                this.skillCharges = 0; this.blindTimer = 0; this.deadTimer = 0;
+                this.xpBoostTimer = 0; this.xpMultiplier = 1.0;
+                this.startDelay = 0;
+                this.stats = { totalDist: 0, items: { xp5: 0, xp15: 0, xp20: 0, xp30: 0, xp99: 0, skill: 0, buffE: 0, chaos: 0 } };
             }
-
+            respawn() {
+                this.deadTimer = 2.0; this.body = [{ x: -999, y: -999 }];
+                this.xpBoostTimer = 0; this.xpMultiplier = 1.0;
+                showMsg(this.id, "CRASHED!");
+            }
             resetToMap() {
-                // 重生邏輯：找安全位置
-                let p = getSafePos();
-                this.body = [];
-                for (let i = 0; i < 3 + this.level; i++) this.body.push({ x: p.x, y: p.y }); 
-                // 暫時重疊，移動後展開
-                this.dir = { x: 0, y: 0 }; // 等待輸入或 AI 決定
-                if(this.isAI) this.randomDir();
+                let centerY = Math.floor(GRID_H / 2);
+                if (this.id === 1) { this.body = [{ x: 3, y: centerY }]; this.dir = { x: 1, y: 0 }; this.nextDir = { x: 1, y: 0 }; } 
+                else { this.body = [{ x: GRID_W - 4, y: centerY }]; this.dir = { x: -1, y: 0 }; this.nextDir = { x: -1, y: 0 }; }
             }
-            
-            randomDir() {
+            applyBlind() { this.blindTimer = BLIND_DURATION; }
+            forceTurn() {
                 let newX = 0, newY = 0;
                 let randomSign = Math.random() < 0.5 ? 1 : -1;
-                if (this.dir.x !== 0) { newX = 0; newY = randomSign; }
-                else { newX = randomSign; newY = 0; }
-                this.nextDir = { x: newX, y: newY };
-                this.dir = { x: newX, y: newY };
+                if (this.dir.x !== 0) { newX = 0; newY = randomSign; } else { newX = randomSign; newY = 0; }
+                this.nextDir = { x: newX, y: newY }; this.dir = { x: newX, y: newY };
             }
-
-            thinkAI() {
+          thinkAI() {
                 // 0. 有技能就放 (修復之前的被動問題)
                 this.tryAutoCastSkill();
 
@@ -1045,69 +974,83 @@
                 let validMoves = moves.filter(m => {
                     // 禁止回頭
                     if (m.x === -this.dir.x && m.y === -this.dir.y) return false;
-                    const nx = head.x + m.x;
+                    
+                    const nx = head.x + m.x; 
                     const ny = head.y + m.y;
+                    
                     // 撞牆檢查
                     if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return false;
+                    
                     // 撞蛇檢查 (檢查所有蛇的身體)
                     // 注意：這裡簡單判斷，如果預測到對手下個頭的位置可能會撞，最好也避開，這裡先只避開身體
                     let collision = snakes.some(s => s.body.some(b => b.x === nx && b.y === ny));
                     if (collision) return false;
+
                     return true;
                 });
 
                 // 如果無路可走，就隨便選一個死掉 (避免報錯)
                 if (validMoves.length === 0) return;
 
-                // 2.【核心進化】過濾掉「死路」 (Flood Fill 檢查是否有出口或足夠空間)
-                // 為了效能，只在空間狹窄時才檢查，這裡簡化為每次檢查
-                let candidateMoves = validMoves.filter(m => {
+                // 2.【核心進化】過濾出「有後路」的移動方向
+                // 只有當移動後的位置，可以通過 BFS 找到地圖邊界，才算是「真·安全」
+                let safeEscapeMoves = validMoves.filter(m => {
                     return checkEscapeRoute(head.x + m.x, head.y + m.y, this.id);
                 });
 
-                if (candidateMoves.length === 0) {
-                    // 如果都是死路，只好走一步算一步 (選原 validMoves)
-                    candidateMoves = validMoves;
-                }
+                // 如果經過過濾還有路，就只考慮這些有後路的方向；
+                // 如果過濾完發現全是死路 (被完全包圍)，那只能從基礎安全步裡選(盡量拖時間)
+                let candidateMoves = safeEscapeMoves.length > 0 ? safeEscapeMoves : validMoves;
 
-                // 3. 視野內找最高分道具
-                let bestMove = null;
-                let maxScore = -9999;
-
-                candidateMoves.forEach(move => {
-                    let nx = head.x + move.x;
-                    let ny = head.y + move.y;
-                    let score = 0;
-
-                    // 尋找視野內的道具
-                    let visibleItems = items.filter(it => {
-                        let dist = Math.sqrt((it.x - head.x) ** 2 + (it.y - head.y) ** 2);
-                        return dist <= radiusGrid;
-                    });
-
-                    if (visibleItems.length > 0) {
-                        // 找到價值最高的
-                        let target = visibleItems.reduce((prev, curr) => {
-                            let wPrev = (prev.def.type === 'buffE' ? 1000 : prev.def.val);
-                            let wCurr = (curr.def.type === 'buffE' ? 1000 : curr.def.val);
-                            return wCurr > wPrev ? curr : prev;
-                        });
-
-                        // 計算移動後距離目標的距離
-                        let distAfterMove = Math.abs(nx - target.x) + Math.abs(ny - target.y);
-                        let currentDist = Math.abs(head.x - target.x) + Math.abs(head.y - target.y);
-
-                        // 如果靠近了目標，加分
-                        if (distAfterMove < currentDist) {
-                            score += (target.def.type === 'buffE' ? 200 : 20);
-                        }
-                    }
-
-                    if (score > maxScore) {
-                        maxScore = score;
-                        bestMove = move;
-                    }
+                // 3. 尋找視野內的道具
+                let visibleItems = items.filter(it => {
+                    let dx = it.x - head.x; let dy = it.y - head.y;
+                    return Math.sqrt(dx * dx + dy * dy) <= radiusGrid;
                 });
+
+                let bestMove = null;
+                let maxScore = -99999;
+
+                // 如果視野內有道具，評估哪個方向最好
+                if (visibleItems.length > 0) {
+                    // 為每個候選移動打分
+                    candidateMoves.forEach(move => {
+                        let nx = head.x + move.x;
+                        let ny = head.y + move.y;
+                        let score = 0;
+
+                        // 判斷此移動是否直接吃到東西
+                        let directItem = visibleItems.find(it => it.x === nx && it.y === ny);
+                        if (directItem) {
+                            if (directItem.def.type === 'buffE') score += 5000; // E 道具優先級最高
+                            else if (directItem.def.type === 'xp99') score += 1000;
+                            else if (directItem.def.type === 'xp') score += directItem.def.val;
+                            else score += 50;
+                        } else {
+                            // 沒直接吃到，但靠近了高價值目標嗎？
+                            // 找視野內價值最高的東西
+                            let target = visibleItems.reduce((prev, curr) => {
+                                let wPrev = (prev.def.type === 'buffE' ? 1000 : prev.def.val);
+                                let wCurr = (curr.def.type === 'buffE' ? 1000 : curr.def.val);
+                                return wCurr > wPrev ? curr : prev;
+                            });
+                            
+                            // 計算移動後距離目標的距離
+                            let distAfterMove = Math.abs(nx - target.x) + Math.abs(ny - target.y);
+                            let currentDist = Math.abs(head.x - target.x) + Math.abs(head.y - target.y);
+                            
+                            // 如果靠近了目標，加分
+                            if (distAfterMove < currentDist) {
+                                score += (target.def.type === 'buffE' ? 200 : 20);
+                            }
+                        }
+
+                        if (score > maxScore) {
+                            maxScore = score;
+                            bestMove = move;
+                        }
+                    });
+                }
 
                 // 4. 決策執行
                 if (bestMove) {
@@ -1126,109 +1069,65 @@
                     }
                 }
             }
-
             tryAutoCastSkill() {
                 const opponent = snakes.find(s => s.id !== this.id);
                 if (opponent && opponent.deadTimer <= 0) this.useSkill(opponent);
             }
-
             update(dt) {
                 if (this.deadTimer > 0) {
                     this.deadTimer -= dt;
                     if (this.deadTimer <= 0) this.resetToMap();
                     return;
                 }
-                
                 if (this.startDelay > 0) {
-                    this.startDelay -= (dt / 1000 * 60); // frame based approx
-                    if (this.startDelay <= 0) this.startDelay = 0;
-                    return;
+                    this.startDelay -= dt;
+                    if (this.startDelay <= 0) { this.startDelay = 0; showMsg(this.id, "AI STARTED!"); }
+                    else return;
                 }
-
-                if (this.blindTimer > 0) this.blindTimer -= (dt / 1000 * 60) / 60; // seconds
+                if (this.blindTimer > 0) this.blindTimer -= dt;
                 if (this.xpBoostTimer > 0) {
-                    this.xpBoostTimer -= (dt / 1000 * 60) / 60;
-                    if (this.xpBoostTimer <= 0) this.xpMultiplier = 1.0;
+                    this.xpBoostTimer -= dt;
+                    if (this.xpBoostTimer <= 0) { this.xpBoostTimer = 0; this.xpMultiplier = 1.0; showMsg(this.id, "BOOST END"); }
                 }
-
-                this.moveTimer += dt;
-                if (this.moveTimer >= this.currentSpeedThreshold) {
-                    this.moveTimer = 0;
+                this.moveAcc += dt * 1000;
+                if (this.moveAcc >= this.currentSpeedThreshold) {
                     if (this.isAI) this.thinkAI();
-                    this.step();
+                    this.moveAcc = 0; this.move();
                 }
             }
-            
-            applyBlind() {
-                this.blindTimer = BLIND_DURATION;
-                showMsg(this.id, "BLINDED!");
-            }
-            
-            forceTurn() {
-                // 強制隨機轉彎 90 度
-                if (this.dir.x !== 0) {
-                    this.nextDir = { x: 0, y: (Math.random()<0.5 ? 1 : -1) };
-                } else {
-                    this.nextDir = { x: (Math.random()<0.5 ? 1 : -1), y: 0 };
-                }
-                this.dir = this.nextDir;
-            }
-
-            step() {
-                // 更新方向
-                if (this.nextDir.x !== -this.dir.x || this.nextDir.y !== -this.dir.y) {
-                    this.dir = this.nextDir;
-                }
-
+            move() {
+                if (this.nextDir.x !== -this.dir.x && this.nextDir.y !== -this.dir.y) this.dir = this.nextDir;
                 let head = this.body[0];
-                let newHead = { x: head.x + this.dir.x, y: head.y + this.dir.y };
-
-                // 邊界檢查 -> 死亡
-                if (newHead.x < 0 || newHead.x >= GRID_W || newHead.y < 0 || newHead.y >= GRID_H) {
-                    this.die();
-                    return;
-                }
-
-                // 撞擊檢查
-                let hitSnake = snakes.find(s => s.body.some(b => b.x === newHead.x && b.y === newHead.y));
-                if (hitSnake) {
-                    this.die();
-                    return;
-                }
-
-                // 移動
+                let nx = head.x + this.dir.x;
+                let ny = head.y + this.dir.y;
+                if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) { this.respawn(); return; }
+                if (this.body.some(b => b.x === nx && b.y === ny)) { this.respawn(); return; }
+                let newHead = { x: nx, y: ny };
                 this.stats.totalDist++;
-                
-                // 吃道具
-                let itemIdx = items.findIndex(it => it.x === newHead.x && it.y === newHead.y);
+                let itemIdx = items.findIndex(i => i.x === nx && i.y === ny);
                 if (itemIdx !== -1) {
-                    let cfg = items[itemIdx].def;
+                    let it = items[itemIdx];
+                    let cfg = it.def;
+                    if (this.stats.items[cfg.id] !== undefined) this.stats.items[cfg.id]++;
                     if (cfg.type === 'xp') this.gainXP(cfg.val);
                     else if (cfg.type === 'skill') {
-                        this.skillCharges++;
-                        showMsg(this.id, "GOT SKILL!");
+                        this.skillCharges++; showMsg(this.id, "GOT SKILL!");
                         if (this.isAI) this.tryAutoCastSkill();
                     } else if (cfg.type === 'buffE') {
-                        this.xpBoostTimer = 5.0;
-                        this.xpMultiplier = 1.5;
-                        showMsg(this.id, "XP x1.5!");
+                        this.xpBoostTimer = 5.0; this.xpMultiplier = 1.5; showMsg(this.id, "XP x1.5!");
                     } else if (cfg.type === 'chaos') {
                         let opponent = snakes.find(s => s.id !== this.id);
                         if (opponent && opponent.deadTimer <= 0) {
-                            opponent.forceTurn();
-                            showMsg(this.id, "CHAOS!");
-                            showMsg(opponent.id, "SPUN!");
+                            opponent.forceTurn(); showMsg(this.id, "CHAOS!"); showMsg(opponent.id, "SPUN!");
                         }
                     }
                     items.splice(itemIdx, 1);
                     scheduleRespawn(cfg);
                 }
-
                 this.body.unshift(newHead);
                 let targetLen = 3 + this.level;
                 while (this.body.length > targetLen) this.body.pop();
             }
-
             gainXP(amount) {
                 let finalXp = amount * this.xpMultiplier;
                 this.xp += finalXp;
@@ -1243,7 +1142,6 @@
                     if (this.isAI) this.tryAutoCastSkill();
                 }
             }
-
             useSkill(targetSnake) {
                 if (this.skillCharges > 0) {
                     this.skillCharges--;
@@ -1252,86 +1150,68 @@
                 }
                 return false;
             }
-
-            die() {
-                showMsg(this.id, "CRASHED!");
-                this.deadTimer = 2000; // 2秒重生
-                this.stats.deaths++;
-                let opp = snakes.find(s => s.id !== this.id);
-                if(opp) opp.stats.kills++;
-                // 掉落一點經驗? 暫不實作
-            }
         }
 
         function showMsg(playerId, text) {
             let el = document.getElementById(`p${playerId}-msg`);
-            el.innerText = text;
-            el.style.opacity = '1';
+            el.innerText = text; el.style.opacity = '1';
             if (el.timeout) clearTimeout(el.timeout);
             el.timeout = setTimeout(() => { el.style.opacity = '0'; }, 1500);
         }
 
         function resize() {
             const container = document.getElementById('game-area');
-            let padX = 40;
-            let padY = 40;
+            let padX = 40; let padY = 40;
             let availW = container.clientWidth - padX;
             let availH = container.clientHeight - padY;
 
             const radios = document.getElementsByName('map_mode');
-            for(let r of radios) {
-                if(r.checked) MAP_MODE = r.value;
-            }
+            for(let r of radios) { if(r.checked) MAP_MODE = r.value; }
 
             if (MAP_MODE === 'fixed') {
+                // 強制 30x12
                 GRID_W = 30;
                 GRID_H = 12;
-                CELL_SIZE = 30; 
-                // 置中
-                canvas.width = GRID_W * CELL_SIZE;
-                canvas.height = GRID_H * CELL_SIZE;
+                // 計算適合的 CELL_SIZE
+                let sizeW = availW / GRID_W;
+                let sizeH = availH / GRID_H;
+                CELL_SIZE = Math.min(sizeW, sizeH);
+                // 限制最大以免在超大螢幕太難看，或者讓它保持清晰
+                if(CELL_SIZE > 60) CELL_SIZE = 60;
+                if(CELL_SIZE < 10) CELL_SIZE = 10;
             } else {
+                // 最大化
                 CELL_SIZE = CELL_SIZE_BASE;
                 GRID_W = Math.floor(availW / CELL_SIZE);
                 GRID_H = Math.floor(availH / CELL_SIZE);
-                canvas.width = GRID_W * CELL_SIZE;
-                canvas.height = GRID_H * CELL_SIZE;
             }
 
+            canvas.width = GRID_W * CELL_SIZE;
+            canvas.height = GRID_H * CELL_SIZE;
             shadowCanvas.width = canvas.width;
             shadowCanvas.height = canvas.height;
         }
 
-        window.addEventListener('resize', () => {
-            if (!isGameOver && !document.getElementById('start-content').classList.contains('hidden')) {
-                resize();
-            }
-        });
-        resize();
-
         function getSafePos() {
-            let limit = 500;
-            while (limit-- > 0) {
-                let x = Math.floor(Math.random() * GRID_W);
-                let y = Math.floor(Math.random() * GRID_H);
-                // 檢查是否撞蛇
-                let hit = snakes.some(s => s.body.some(b => b.x === x && b.y === y));
-                // 檢查道具
-                if (!hit) hit = items.some(i => i.x === x && i.y === y);
-                if (!hit) return { x, y };
-            }
-            return { x: 0, y: 0 };
+            let x, y, attempts = 0;
+            do {
+                x = Math.floor(Math.random() * GRID_W);
+                y = Math.floor(Math.random() * GRID_H);
+                attempts++;
+            } while (items.some(i => i.x === x && i.y === y) && attempts < 100);
+            return { x, y };
         }
 
         function initGame() {
+            // 保存當前設定
             localStorage.setItem('sr_p1_ai', p1AiToggle.checked);
             localStorage.setItem('sr_p2_ai', p2AiToggle.checked);
 
+            resize();
             let centerY = Math.floor(GRID_H / 2);
-            let totalCells = GRID_W * GRID_H;
-            
-            // 動態調整道具數量
-            let xp5Config = ITEM_CONFIG.find(c => c.id === 'xp5');
+            const totalCells = GRID_W * GRID_H;
+
+            const xp5Config = ITEM_CONFIG.find(c => c.id === 'xp5');
             if (xp5Config) xp5Config.count = Math.floor(totalCells * 0.15);
 
             let p1Name = p1NameIn.value || "PLAYER 1";
@@ -1351,7 +1231,7 @@
                 new Snake(1, p1Name, 3, centerY, 1, 0, p1c, p1IsAi),
                 new Snake(2, p2Name, GRID_W - 4, centerY, -1, 0, p2c, p2IsAi)
             ];
-            
+
             if (isMixedMatch) {
                 if (p1IsAi) snakes[0].startDelay = AI_HANDICAP_SECONDS;
                 if (p2IsAi) snakes[1].startDelay = AI_HANDICAP_SECONDS;
@@ -1387,81 +1267,79 @@
 
         function startGame() {
             document.getElementById('start-content').classList.add('hidden');
-            document.getElementById('end-content').classList.add('hidden');
-            document.getElementById('leaderboard-section-start').classList.add('hidden'); // Hide home LB
-            resize(); // 鎖定地圖大小
-            initGame();
+            document.getElementById('overlay-screen').classList.add('hidden');
             
-            p1NameIn.disabled = true;
-            p2NameIn.disabled = true;
-            p1ColorIn.disabled = true;
-            p2ColorIn.disabled = true;
+            // 隱藏地圖選擇 UI
             document.querySelectorAll('input[name="map_mode"]').forEach(r => r.disabled = true);
+
+            p1NameIn.disabled = true; p2NameIn.disabled = true;
+            p1ColorIn.disabled = true; p2ColorIn.disabled = true;
             document.getElementById('p1-ai-label').classList.add('ai-hidden');
             document.getElementById('p2-ai-label').classList.add('ai-hidden');
 
-            requestAnimationFrame(loop);
+            initGame();
+            requestAnimationFrame(gameLoop);
         }
 
-        function loop(now) {
+        function gameLoop(time) {
             if (isGameOver) return;
-            let dt = now - lastTime;
-            lastTime = now;
+            let dt = (time - lastTime) / 1000;
+            lastTime = time;
+            timeLeft -= dt;
 
-            update(dt);
-            draw();
+            // History Recording
+            historyTimer += dt;
+            if (historyTimer >= 0.5) {
+                historyTimer = 0;
+                let elapsed = GAME_DURATION - timeLeft;
+                if (elapsed < 0) elapsed = 0;
+                xpHistory.times.push(elapsed);
+                xpHistory.p1.push(snakes[0].totalAccumulatedXp);
+                xpHistory.p2.push(snakes[1].totalAccumulatedXp);
+            }
 
-            if (!isGameOver) requestAnimationFrame(loop);
-        }
-
-        function update(dt) {
-            // 計時
-            timeLeft -= dt / 1000;
             if (timeLeft <= 0) {
                 timeLeft = 0;
+                xpHistory.times.push(90);
+                xpHistory.p1.push(snakes[0].totalAccumulatedXp);
+                xpHistory.p2.push(snakes[1].totalAccumulatedXp);
                 endGame();
-                return;
-            }
-            document.getElementById('timer-display').innerText = Math.ceil(timeLeft);
-
-            // 數據記錄 (每秒)
-            historyTimer += dt;
-            if (historyTimer >= 1000) {
-                historyTimer -= 1000;
-                let t = GAME_DURATION - Math.floor(timeLeft);
-                xpHistory.times.push(t);
-                xpHistory.p1.push(Math.floor(snakes[0].totalAccumulatedXp));
-                xpHistory.p2.push(Math.floor(snakes[1].totalAccumulatedXp));
             }
 
-            // 重生道具
+            let tDisplay = document.getElementById('timer-display');
+            tDisplay.innerText = Math.ceil(timeLeft);
+            if (timeLeft < 10) tDisplay.style.color = '#e74c3c';
+            else tDisplay.style.color = '#fff';
+
             for (let i = pendingSpawns.length - 1; i >= 0; i--) {
-                let p = pendingSpawns[i];
-                p.timer -= dt / 1000; // use seconds
-                if (p.timer <= 0) {
-                    spawnItemImmediate(p.def);
+                pendingSpawns[i].timer -= dt;
+                if (pendingSpawns[i].timer <= 0) {
+                    spawnItemImmediate(pendingSpawns[i].def);
                     pendingSpawns.splice(i, 1);
                 }
             }
 
             snakes.forEach(s => s.update(dt));
             updateUI();
+            draw();
+            gameLoopId = requestAnimationFrame(gameLoop);
         }
 
         function updateUI() {
-            snakes.forEach(s => {
+            // 防止結算畫面後 UI 再次更新導致隱藏標籤重現
+            if (isGameOver) return; 
+
+            [0, 1].forEach(i => {
+                let s = snakes[i];
                 let pId = s.id;
                 document.getElementById(`p${pId}-lv`).innerText = s.level;
                 let pct = (s.xp / s.maxXp) * 100;
                 document.getElementById(`p${pId}-bar`).style.width = pct + "%";
                 document.getElementById(`p${pId}-charges`).innerText = s.skillCharges;
-                
                 let blindTag = document.getElementById(`p${pId}-blind-tag`);
                 s.blindTimer > 0 ? blindTag.classList.remove('hidden') : blindTag.classList.add('hidden');
-                
                 let boostTag = document.getElementById(`p${pId}-boost-tag`);
                 s.xpBoostTimer > 0 ? boostTag.classList.remove('hidden') : boostTag.classList.add('hidden');
-                
                 let waitTag = document.getElementById(`p${pId}-wait-tag`);
                 if (s.startDelay > 0) {
                     waitTag.classList.remove('hidden');
@@ -1473,7 +1351,6 @@
         function draw() {
             ctx.fillStyle = COMMON_COLORS.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             drawGrid();
 
             // 1. 地板視野
@@ -1483,52 +1360,49 @@
                 let head = s.body[0];
                 let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
                 let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
-                
                 let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
                 if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
                 if (s.startDelay > 0) radiusGrid = 2.0;
-
                 let radiusPx = radiusGrid * CELL_SIZE;
                 let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
                 let facingAngle = Math.atan2(s.dir.y, s.dir.x);
-
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineTo(cx, cy);
+                ctx.fillStyle = 'rgba(255, 50, 50, 0.15)';
                 ctx.fill();
             });
             ctx.restore();
 
             // 2. 道具
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
             items.forEach(it => {
                 let cx = it.x * CELL_SIZE + CELL_SIZE / 2;
                 let cy = it.y * CELL_SIZE + CELL_SIZE / 2;
-                
-                // 簡易發光
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = it.def.color;
-                ctx.fillStyle = it.def.color;
-                
-                if (it.def.type === 'xp') {
-                     ctx.font = "bold 14px Arial";
-                     ctx.textAlign = "center";
-                     ctx.textBaseline = "middle";
-                     ctx.fillText(it.def.val, cx, cy);
+                let type = it.def.type;
+                ctx.shadowBlur = 0;
+                if (type === 'skill') {
+                    ctx.font = "900 " + (CELL_SIZE*0.8) + "px Roboto";
+                    ctx.fillStyle = it.def.color;
+                    ctx.shadowBlur = 15; ctx.shadowColor = 'red';
+                    ctx.fillText("Q", cx, cy);
+                } else if (type === 'buffE') {
+                    ctx.font = "900 " + (CELL_SIZE*0.85) + "px Roboto";
+                    ctx.fillStyle = it.def.color;
+                    ctx.shadowBlur = 15; ctx.shadowColor = '#0055ff';
+                    ctx.fillText("E", cx, cy);
+                } else if (type === 'chaos') {
+                    ctx.font = (CELL_SIZE*0.8) + "px sans-serif";
+                    ctx.fillStyle = it.def.color;
+                    ctx.fillText("🔄", cx, cy);
                 } else {
-                     ctx.beginPath();
-                     ctx.arc(cx, cy, CELL_SIZE/3, 0, Math.PI*2);
-                     ctx.fill();
-                     // Icon Text
-                     ctx.fillStyle = "#000";
-                     ctx.font = "bold 10px Arial";
-                     ctx.textAlign = "center";
-                     ctx.textBaseline = "middle";
-                     let icon = "?";
-                     if (it.def.type === 'skill') icon = "Q";
-                     if (it.def.type === 'buffE') icon = "E";
-                     if (it.def.type === 'chaos') icon = "X";
-                     ctx.fillText(icon, cx, cy);
+                    ctx.fillStyle = it.def.color;
+                    let fontSize = CELL_SIZE * 0.45;
+                    if (it.def.val >= 30) fontSize = CELL_SIZE * 0.6;
+                    ctx.font = `bold ${fontSize}px Roboto`;
+                    if (it.def.val >= 30) { ctx.shadowBlur = 10; ctx.shadowColor = it.def.color; }
+                    ctx.fillText(it.def.val, cx, cy);
                 }
                 ctx.shadowBlur = 0;
             });
@@ -1537,34 +1411,24 @@
             snakes.forEach(s => {
                 if (s.deadTimer > 0) return;
                 ctx.fillStyle = s.color;
-                if (s.xpBoostTimer > 0) {
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = '#00ffff';
-                } else {
-                    ctx.shadowBlur = 0;
-                }
-                
+                if (s.startDelay > 0) ctx.globalAlpha = 0.5;
+                if (s.xpBoostTimer > 0) { ctx.shadowBlur = 10; ctx.shadowColor = '#00ffff'; } else { ctx.shadowBlur = 0; }
                 s.body.forEach((b, i) => {
                     ctx.fillRect(b.x * CELL_SIZE + 1, b.y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
                     if (i === 0) {
-                         ctx.fillStyle = '#fff';
-                         let ex = (b.x * CELL_SIZE + CELL_SIZE / 2) + s.dir.x * (CELL_SIZE*0.25);
-                         let ey = (b.y * CELL_SIZE + CELL_SIZE / 2) + s.dir.y * (CELL_SIZE*0.25);
-                         ctx.beginPath();
-                         ctx.arc(ex, ey, CELL_SIZE*0.1, 0, Math.PI * 2);
-                         ctx.fill();
-                         ctx.fillStyle = s.color;
+                        ctx.fillStyle = '#fff';
+                        let ex = (b.x * CELL_SIZE + CELL_SIZE / 2) + s.dir.x * (CELL_SIZE*0.25);
+                        let ey = (b.y * CELL_SIZE + CELL_SIZE / 2) + s.dir.y * (CELL_SIZE*0.25);
+                        ctx.beginPath(); ctx.arc(ex, ey, CELL_SIZE*0.1, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = s.color;
                     }
                 });
-                ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1.0;
-                
+                ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
                 if (s.startDelay > 0) {
                     let head = s.body[0];
                     let hx = head.x * CELL_SIZE + CELL_SIZE / 2;
                     let hy = head.y * CELL_SIZE - 10;
-                    ctx.fillStyle = "#fff";
-                    ctx.font = "bold 14px Roboto";
+                    ctx.fillStyle = "#fff"; ctx.font = "bold 14px Roboto";
                     ctx.fillText(`${Math.ceil(s.startDelay)}`, hx, hy);
                 }
             });
@@ -1573,74 +1437,62 @@
         }
 
         function drawGrid() {
-            ctx.strokeStyle = COMMON_COLORS.grid;
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = COMMON_COLORS.grid; ctx.lineWidth = 1;
             ctx.beginPath();
-            for (let x = 0; x <= GRID_W; x++) {
-                ctx.moveTo(x * CELL_SIZE, 0);
-                ctx.lineTo(x * CELL_SIZE, canvas.height);
-            }
-            for (let y = 0; y <= GRID_H; y++) {
-                ctx.moveTo(0, y * CELL_SIZE);
-                ctx.lineTo(canvas.width, y * CELL_SIZE);
-            }
+            for (let x = 0; x <= GRID_W; x++) { ctx.moveTo(x * CELL_SIZE, 0); ctx.lineTo(x * CELL_SIZE, canvas.height); }
+            for (let y = 0; y <= GRID_H; y++) { ctx.moveTo(0, y * CELL_SIZE); ctx.lineTo(canvas.width, y * CELL_SIZE); }
             ctx.stroke();
         }
 
         function drawShadowLayer() {
-            // Shadow Logic: 每個玩家周圍有光，其他地方黑
-            // 由於效能與複雜度，這裡做一個簡單的 Mask
-            shadowCtx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
-            shadowCtx.fillStyle = 'rgba(0, 0, 0, 1.0)'; // 全黑
-            shadowCtx.fillRect(0, 0, shadowCanvas.width, shadowCanvas.height);
-
+            shadowCtx.clearRect(0, 0, canvas.width, canvas.height);
+            shadowCtx.globalCompositeOperation = 'source-over';
+            shadowCtx.fillStyle = COMMON_COLORS.shadow;
+            shadowCtx.fillRect(0, 0, canvas.width, canvas.height);
             shadowCtx.globalCompositeOperation = 'destination-out';
-            
+
             snakes.forEach(s => {
                 if (s.deadTimer > 0) return;
                 let head = s.body[0];
                 let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
                 let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
-
                 let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
                 if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
                 if (s.startDelay > 0) radiusGrid = 2.0;
-
                 let radiusPx = radiusGrid * CELL_SIZE;
                 let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
-                
-                // 錐形視野
                 let facingAngle = Math.atan2(s.dir.y, s.dir.x);
-                
+
+                let g = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, radiusPx);
+                if (s.blindTimer > 0) {
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.9, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                } else {
+                    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.7, 'rgba(0,0,0,0.8)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                }
+                shadowCtx.fillStyle = g;
                 shadowCtx.beginPath();
                 shadowCtx.moveTo(cx, cy);
                 shadowCtx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
+                shadowCtx.lineTo(cx, cy);
                 shadowCtx.fill();
-                
-                // 身體周圍微光 (避免自己看不見自己屁股)
-                s.body.forEach(b => {
-                    let px = b.x * CELL_SIZE + CELL_SIZE/2;
-                    let py = b.y * CELL_SIZE + CELL_SIZE/2;
-                    shadowCtx.beginPath();
-                    shadowCtx.arc(px, py, CELL_SIZE * 0.7, 0, Math.PI * 2);
-                    shadowCtx.fill();
+
+                shadowCtx.fillStyle = 'rgba(0,0,0,1)';
+                s.body.forEach(part => {
+                    let px = part.x * CELL_SIZE + CELL_SIZE / 2;
+                    let py = part.y * CELL_SIZE + CELL_SIZE / 2;
+                    shadowCtx.beginPath(); shadowCtx.arc(px, py, CELL_SIZE * 0.7, 0, Math.PI * 2); shadowCtx.fill();
                 });
-                
+
                 if (s.xpBoostTimer > 0) {
-                     let glowR = 6 * CELL_SIZE;
-                     let g2 = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
-                     g2.addColorStop(0, 'rgba(0,0,0,1)');
-                     g2.addColorStop(1, 'rgba(0,0,0,0)');
-                     shadowCtx.fillStyle = g2;
-                     shadowCtx.beginPath();
-                     shadowCtx.arc(cx, cy, glowR, 0, Math.PI * 2);
-                     shadowCtx.fill();
+                    let glowR = 6 * CELL_SIZE;
+                    let g2 = shadowCtx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+                    g2.addColorStop(0, 'rgba(0,0,0,1)'); g2.addColorStop(1, 'rgba(0,0,0,0)');
+                    shadowCtx.fillStyle = g2;
+                    shadowCtx.beginPath(); shadowCtx.arc(cx, cy, glowR, 0, Math.PI * 2); shadowCtx.fill();
                 }
             });
-
             ctx.drawImage(shadowCanvas, 0, 0);
 
-            // 額外光效渲染 (Additive)
             ctx.save();
             ctx.globalCompositeOperation = 'screen';
             snakes.forEach(s => {
@@ -1648,11 +1500,9 @@
                 let head = s.body[0];
                 let cx = head.x * CELL_SIZE + CELL_SIZE / 2;
                 let cy = head.y * CELL_SIZE + CELL_SIZE / 2;
-
                 let radiusGrid = VISION_BASE_DIST + (s.level - 1) * VISION_PER_LV_DIST;
                 if (s.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
                 if (s.startDelay > 0) radiusGrid = 2.0;
-                
                 let radiusPx = radiusGrid * CELL_SIZE;
                 let spreadDeg = VISION_BASE_ANGLE + (s.level - 1) * VISION_PER_LV_ANGLE;
                 let facingAngle = Math.atan2(s.dir.y, s.dir.x);
@@ -1661,14 +1511,35 @@
                 lightG.addColorStop(0, 'rgba(255, 160, 40, 0.4)');
                 lightG.addColorStop(0.6, 'rgba(255, 120, 0, 0.1)');
                 lightG.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
                 ctx.fillStyle = lightG;
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, radiusPx, facingAngle - spreadDeg * (Math.PI / 360), facingAngle + spreadDeg * (Math.PI / 360));
+                ctx.lineTo(cx, cy);
                 ctx.fill();
+
+                if (s.xpBoostTimer > 0) {
+                    let glowR = 6 * CELL_SIZE;
+                    let buffG = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+                    let cRgbaMid = hexToRgba(s.color, 0.4);
+                    let cRgbaEnd = hexToRgba(s.color, 0);
+                    buffG.addColorStop(0, cRgbaMid); buffG.addColorStop(1, cRgbaEnd);
+                    ctx.fillStyle = buffG;
+                    ctx.beginPath(); ctx.arc(cx, cy, glowR, 0, Math.PI * 2); ctx.fill();
+                }
             });
             ctx.restore();
+        }
+
+        function getXpAtTime(playerIdx, timeSec) {
+            let idx = -1;
+            let minDiff = 999;
+            for(let i=0; i<xpHistory.times.length; i++) {
+                let diff = Math.abs(xpHistory.times[i] - timeSec);
+                if(diff < minDiff) { minDiff = diff; idx = i; }
+            }
+            if(idx === -1) return 0;
+            return playerIdx === 1 ? xpHistory.p1[idx] : xpHistory.p2[idx];
         }
 
         function endGame() {
@@ -1676,13 +1547,13 @@
             let s1 = snakes[0];
             let s2 = snakes[1];
             let winnerId = 0;
-            let reason = "";
+            let reason = "Time Up";
 
             if (s1.level > s2.level) { winnerId = 1; reason = "Higher Level"; }
             else if (s2.level > s1.level) { winnerId = 2; reason = "Higher Level"; }
             else {
-                if (s1.totalAccumulatedXp > s2.totalAccumulatedXp) { winnerId = 1; reason = "More XP"; }
-                else if (s2.totalAccumulatedXp > s1.totalAccumulatedXp) { winnerId = 2; reason = "More XP"; }
+                if (s1.xp > s2.xp) { winnerId = 1; reason = "More XP"; }
+                else if (s2.xp > s1.xp) { winnerId = 2; reason = "More XP"; }
                 else {
                     if (s1.stats.totalDist > s2.stats.totalDist) { winnerId = 1; reason = "Distance Traveled"; }
                     else if (s2.stats.totalDist > s1.stats.totalDist) { winnerId = 2; reason = "Distance Traveled"; }
@@ -1690,10 +1561,8 @@
                 }
             }
 
-            p1NameIn.disabled = false;
-            p2NameIn.disabled = false;
-            p1ColorIn.disabled = false;
-            p2ColorIn.disabled = false;
+            p1NameIn.disabled = false; p2NameIn.disabled = false;
+            p1ColorIn.disabled = false; p2ColorIn.disabled = false;
             document.querySelectorAll('input[name="map_mode"]').forEach(r => r.disabled = false);
             document.getElementById('p1-ai-label').classList.remove('ai-hidden');
             document.getElementById('p2-ai-label').classList.remove('ai-hidden');
@@ -1702,6 +1571,7 @@
             s1.blindTimer = 0; s2.blindTimer = 0;
             s1.xpBoostTimer = 0; s2.xpBoostTimer = 0;
             s1.startDelay = 0; s2.startDelay = 0;
+            
             document.getElementById('p1-blind-tag').classList.add('hidden');
             document.getElementById('p2-blind-tag').classList.add('hidden');
             document.getElementById('p1-boost-tag').classList.add('hidden');
@@ -1714,6 +1584,7 @@
             let p1Segs = [];
             let p2Segs = [];
             let lastP1 = 0, lastP2 = 0;
+
             intervals.forEach(t => {
                 let currP1 = getXpAtTime(1, t);
                 let currP2 = getXpAtTime(2, t);
@@ -1738,35 +1609,36 @@
             showEndScreen(winnerId, reason, s1, s2, p1Segs, p2Segs);
         }
 
-        function getXpAtTime(pId, timeSec) {
-            let idx = xpHistory.times.indexOf(timeSec);
-            if (idx === -1) {
-                // 找不到精確點，找最近的 (簡單處理)
-                return (pId === 1) ? xpHistory.p1[xpHistory.p1.length-1] : xpHistory.p2[xpHistory.p2.length-1];
-            }
-            return (pId === 1) ? xpHistory.p1[idx] : xpHistory.p2[idx];
-        }
+       function updateLeaderboard(type, player, segments) {
+            let dbKey = 'sr_lb_' + type; // sr_lb_pvp, sr_lb_pve, sr_lb_aivai
+            let raw = localStorage.getItem(dbKey);
+            let lb = raw ? JSON.parse(raw) : [];
 
-        function updateLeaderboard(type, player, segs) {
-            let key = `sr_lb_${type}`;
-            let data = JSON.parse(localStorage.getItem(key) || "[]");
-            
-            let entry = {
+            // --- 修改開始：自定義日期格式 ---
+            const now = new Date();
+            const pad = (n) => n.toString().padStart(2, '0');
+            const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+            // 新增記錄
+            let record = {
                 name: player.name,
                 total: Math.floor(player.totalAccumulatedXp),
-                segs: segs,
-                date: new Date().toLocaleDateString()
+                segs: segments, 
+                date: dateStr // 使用上面生成的格式
             };
+            // --- 修改結束 ---
+
+            lb.push(record);
+            // 排序 (Total Desc)
+            lb.sort((a, b) => b.total - a.total);
+            // 取前 10
+            lb = lb.slice(0, 10);
             
-            data.push(entry);
-            data.sort((a, b) => b.total - a.total);
-            if (data.length > 10) data = data.slice(0, 10);
-            
-            localStorage.setItem(key, JSON.stringify(data));
+            localStorage.setItem(dbKey, JSON.stringify(lb));
         }
 
         function clearLeaderboard() {
-            if(confirm("確定要清除所有排行榜數據嗎？")) {
+            if(confirm('確定要清除所有排行榜記錄嗎？此操作無法復原。')) {
                 localStorage.removeItem('sr_lb_pvp');
                 localStorage.removeItem('sr_lb_pve');
                 localStorage.removeItem('sr_lb_aivai');
@@ -1775,23 +1647,27 @@
         }
 
         function renderLeaderboard() {
-            // Helper to fill table
             function fillTable(tbodyId, type) {
-                let tbody = document.getElementById(tbodyId);
-                if (!tbody) return; // safety
-                tbody.innerHTML = "";
-                let key = `sr_lb_${type}`;
-                let data = JSON.parse(localStorage.getItem(key) || "[]");
-                
+                const tbody = document.getElementById(tbodyId);
+                tbody.innerHTML = '';
+                let dbKey = 'sr_lb_' + type;
+                let raw = localStorage.getItem(dbKey);
+                let data = raw ? JSON.parse(raw) : [];
+
+                if(data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="color:#666; font-style:italic; padding:10px;">No Records</td></tr>';
+                    return;
+                }
                 data.forEach((row, idx) => {
                     let tr = document.createElement('tr');
-                    let segHtml = "";
-                    // 6 個段 (0-90s)
+                    let segHtml = '';
+                    // 顯示 6 個段 (0-90s)
                     for(let i=0; i<6; i++) {
                         let val = (row.segs && row.segs[i] !== undefined) ? row.segs[i] : 0;
                         segHtml += `<td class="lb-seg">${val}</td>`;
                     }
-                    tr.innerHTML = `
+
+             tr.innerHTML = `
                         <td style="color:${idx===0?'#f1c40f':'#888'}">${idx+1}</td>
                         <td class="lb-name">
                             <div style="font-weight:bold; font-size:14px;">${row.name}</div>
@@ -1804,22 +1680,15 @@
                 });
             }
 
-            // Fill End Screen Tables
             fillTable('lb-pvp-body', 'pvp');
             fillTable('lb-pve-body', 'pve');
             fillTable('lb-aivai-body', 'aivai');
-
-            // Fill Start Screen Tables (New)
-            fillTable('lb-pvp-body-start', 'pvp');
-            fillTable('lb-pve-body-start', 'pve');
-            fillTable('lb-aivai-body-start', 'aivai');
         }
 
         function showEndScreen(wId, reason, s1, s2, p1Segs, p2Segs) {
             let overlay = document.getElementById('overlay-screen');
             let startContent = document.getElementById('start-content');
             let endContent = document.getElementById('end-content');
-            
             overlay.classList.remove('hidden');
             startContent.classList.add('hidden');
             endContent.classList.remove('hidden');
@@ -1828,16 +1697,10 @@
             let reasonEl = document.getElementById('win-reason');
             let mapSizeEl = document.getElementById('map-size-info');
 
-            if (wId === 1) {
-                titleEl.innerText = `${s1.name} WINS!`;
-                titleEl.style.color = s1.color;
-            } else if (wId === 2) {
-                titleEl.innerText = `${s2.name} WINS!`;
-                titleEl.style.color = s2.color;
-            } else {
-                titleEl.innerText = "DRAW GAME";
-                titleEl.style.color = "#aaa";
-            }
+            if (wId === 1) { titleEl.innerText = `${s1.name} WINS!`; titleEl.style.color = s1.color; }
+            else if (wId === 2) { titleEl.innerText = `${s2.name} WINS!`; titleEl.style.color = s2.color; }
+            else { titleEl.innerText = "DRAW GAME"; titleEl.style.color = "#aaa"; }
+            
             reasonEl.innerText = `Victory by: ${reason}`;
             mapSizeEl.innerText = `MAP SIZE: ${GRID_W} x ${GRID_H}`;
 
@@ -1847,39 +1710,63 @@
                     <div class="stat-label">LEVEL</div>
                     <div class="p2-val" style="color:${s2.color}">${s2.level}</div>
                 </div>
+                <div class="stat-row">
+                    <div class="p1-val" style="color:${s1.color}">${Math.floor(s1.xp)} / ${s1.maxXp}</div>
+                    <div class="stat-label">XP</div>
+                    <div class="p2-val" style="color:${s2.color}">${Math.floor(s2.xp)} / ${s2.maxXp}</div>
+                </div>
+            `;
+            const itemRows = [
+                { id: 'buffE', label: 'Buff EXP', color: ITEM_COLORS.buffE },
+                { id: 'chaos', label: 'Skill (🔄)', color: ITEM_COLORS.chaos },
+                { id: 'skill', label: 'Skill (Q)', color: ITEM_COLORS.skillQ },
+                { id: 'xp99', label: 'EXP 99', color: ITEM_COLORS.xp99 },
+                { id: 'xp30', label: 'EXP 30', color: ITEM_COLORS.xp30 },
+                { id: 'xp20', label: 'EXP 20', color: ITEM_COLORS.xp20 },
+                { id: 'xp15', label: 'EXP 15', color: ITEM_COLORS.xp15 },
+                { id: 'xp5', label: 'EXP 5', color: ITEM_COLORS.xp5 }
+            ];
+            itemRows.forEach(row => {
+                let c1 = s1.stats.items[row.id] || 0;
+                let c2 = s2.stats.items[row.id] || 0;
+                tableHtml += `
+                    <div class="stat-row">
+                        <div class="p1-val" style="color:#ccc">${c1}</div>
+                        <div class="stat-label"><span class="item-dot" style="background:${row.color}"></span> ${row.label}</div>
+                        <div class="p2-val" style="color:#ccc">${c2}</div>
+                    </div>
+                `;
+            });
+            tableHtml += `
                 <div class="stat-row total-row">
-                    <div class="p1-val">${Math.floor(s1.totalAccumulatedXp)}</div>
-                    <div class="stat-label">Total XP</div>
-                    <div class="p2-val">${Math.floor(s2.totalAccumulatedXp)}</div>
-                </div>
-                <div class="stat-row">
-                    <div class="p1-val">${s1.stats.itemsCollected || 0}</div>
-                    <div class="stat-label">Items</div>
-                    <div class="p2-val">${s2.stats.itemsCollected || 0}</div>
-                </div>
-                <div class="stat-row">
-                    <div class="p1-val">${s1.stats.skillUsed}</div>
-                    <div class="stat-label">Skills Used</div>
-                    <div class="p2-val">${s2.stats.skillUsed}</div>
-                </div>
-                <div class="stat-row">
-                    <div class="p1-val">${s1.stats.deaths}</div>
-                    <div class="stat-label">Deaths</div>
-                    <div class="p2-val">${s2.stats.deaths}</div>
+                    <div class="p1-val" style="color:${s1.color}">${s1.stats.totalDist}</div>
+                    <div class="stat-label">總移動距離</div>
+                    <div class="p2-val" style="color:${s2.color}">${s2.stats.totalDist}</div>
                 </div>
             `;
             document.getElementById('stat-table').innerHTML = tableHtml;
 
-            // --- 渲染分段分析 ---
-            let segTable = document.getElementById('seg-table-body');
-            let timeLabels = ["0-15s", "15-30s", "30-45s", "45-60s", "60-75s", "75-90s"];
-            let segHtml = `<thead><tr><th>Time</th><th style="color:${s1.color}">P1 XP</th><th style="color:${s2.color}">P2 XP</th></tr></thead><tbody>`;
-            
+            // --- 渲染分段表格 (移除了 Gap Column) ---
+            const segTable = document.getElementById('seg-table-body');
+            let segHtml = `
+                <thead>
+                    <tr>
+                        <th style="color:#888">Time Segment</th>
+                        <th style="color:${s1.color}">${s1.name} Gain</th>
+                        <th style="color:${s2.color}">${s2.name} Gain</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            const timeLabels = ["0-15s", "15-30s", "30-45s", "45-60s", "60-75s", "75-90s"];
             for(let i=0; i<6; i++) {
                 let v1 = p1Segs[i];
                 let v2 = p2Segs[i];
+                
+                // Highlight color logic
                 let c1Style = v1 > v2 ? `color:${s1.color}; font-weight:bold` : '';
                 let c2Style = v2 > v1 ? `color:${s2.color}; font-weight:bold` : '';
+
                 segHtml += `
                     <tr>
                         <td>${timeLabels[i]}</td>
@@ -1908,7 +1795,6 @@
             chartC.width = chartC.clientWidth;
             chartC.height = chartC.clientHeight;
             const cCtx = chartC.getContext('2d');
-            
             const w = chartC.width;
             const h = chartC.height;
             const padLeft = 60;
@@ -1921,7 +1807,6 @@
             let realMax = 0;
             xpHistory.p1.forEach(v => { if (v > realMax) realMax = v; });
             xpHistory.p2.forEach(v => { if (v > realMax) realMax = v; });
-
             let maxY = Math.max(realMax, 500);
             maxY = Math.ceil(maxY / 500) * 500;
 
@@ -1934,26 +1819,36 @@
             for (let t = 0; t <= 90; t += 15) {
                 let x = padLeft + (t / 90) * (w - padLeft - padRight);
                 cCtx.beginPath(); cCtx.moveTo(x, padTop); cCtx.lineTo(x, h - padBottom); cCtx.stroke();
-                cCtx.fillText(t + "s", x - 10, h - 10);
-            }
-            // Y Axis
-            for (let v = 0; v <= maxY; v += 500) {
-                let y = h - padBottom - (v / maxY) * (h - padBottom - padTop);
-                cCtx.beginPath(); cCtx.moveTo(padLeft, y); cCtx.lineTo(w - padRight, y); cCtx.stroke();
-                cCtx.fillText(v, 10, y + 5);
+                cCtx.textAlign = 'center';
+                cCtx.fillText(t + 's', x, h - padBottom + 25);
             }
 
-            function drawLine(dataArr, color) {
+            // Y Axis
+            for (let xp = 0; xp <= maxY; xp += 500) {
+                let y = (h - padBottom) - (xp / maxY) * (h - padBottom - padTop);
+                cCtx.beginPath(); cCtx.moveTo(padLeft, y); cCtx.lineTo(w - padRight, y); cCtx.stroke();
+                cCtx.textAlign = 'right';
+                cCtx.fillText(xp, padLeft - 10, y + 5);
+            }
+
+            cCtx.strokeStyle = '#aaa';
+            cCtx.lineWidth = 2;
+            cCtx.beginPath();
+            cCtx.moveTo(padLeft, padTop);
+            cCtx.lineTo(padLeft, h - padBottom);
+            cCtx.lineTo(w - padRight, h - padBottom);
+            cCtx.stroke();
+
+            function drawLine(data, color) {
                 cCtx.beginPath();
                 cCtx.strokeStyle = color;
-                cCtx.lineWidth = 3;
-                for (let i = 0; i < dataArr.length; i++) {
+                cCtx.lineWidth = 3; 
+                for (let i = 0; i < xpHistory.times.length; i++) {
                     let t = xpHistory.times[i];
-                    let xp = dataArr[i];
+                    let val = data[i];
                     let x = padLeft + (t / 90) * (w - padLeft - padRight);
-                    let y = h - padBottom - (xp / maxY) * (h - padBottom - padTop);
-                    if (i === 0) cCtx.moveTo(x, y);
-                    else cCtx.lineTo(x, y);
+                    let y = (h - padBottom) - (val / maxY) * (h - padBottom - padTop);
+                    if (i === 0) cCtx.moveTo(x, y); else cCtx.lineTo(x, y);
                 }
                 cCtx.stroke();
             }
@@ -1961,64 +1856,94 @@
             drawLine(xpHistory.p1, c1);
             drawLine(xpHistory.p2, c2);
         }
+// --- AI 核心算法：檢查是否能通往邊界 (後路檢測) ---
+function checkEscapeRoute(startX, startY, currentSnakeId) {
+    // 如果起點本身就是邊界，直接算安全
+    if (startX === 0 || startX === GRID_W - 1 || startY === 0 || startY === GRID_H - 1) return true;
 
-        async function captureScreenshot() {
-            try {
-                const target = document.getElementById('capture-target');
-                const canvas = await html2canvas(target, { backgroundColor: "#000" });
+    // 建立一個臨時的碰撞網格，標記所有障礙物
+    let visited = new Set();
+    let queue = [{ x: startX, y: startY }];
+    visited.add(`${startX},${startY}`);
+
+    // 將所有蛇的身體標記為不可通行 (包括自己目前的身體)
+    snakes.forEach(s => {
+        s.body.forEach(b => {
+            visited.add(`${b.x},${b.y}`);
+        });
+    });
+
+    // 為了效能，我們設定搜索上限 (例如搜索 300 格還找不到邊界就算失敗，避免大圖卡頓)
+    let searchLimit = 400; 
+    let count = 0;
+
+    const directions = [{ x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }];
+
+    while (queue.length > 0) {
+        let curr = queue.shift();
+        count++;
+        if (count > searchLimit) return true; // 搜索範圍夠大，假設是開放空間
+
+        // 檢查 4 個方向
+        for (let dir of directions) {
+            let nx = curr.x + dir.x;
+            let ny = curr.y + dir.y;
+
+            // 碰到邊界了！代表有後路，安全
+            if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return true;
+            // 修正：如果碰到邊緣座標 (0, W-1, etc) 也算安全
+            if (nx === 0 || nx === GRID_W - 1 || ny === 0 || ny === GRID_H - 1) return true;
+
+            let key = `${nx},${ny}`;
+            if (!visited.has(key)) {
+                visited.add(key);
+                queue.push({ x: nx, y: ny });
+            }
+        }
+    }
+
+    // 隊列跑完都沒碰到邊界，代表被包圍了
+    return false;
+}
+        function captureScreenshot() {
+            const targetEl = document.querySelector("#capture-target");
+            const btn = document.querySelector(".btn-blue");
+            const originalText = btn.innerText;
+            btn.innerText = "📸 Processing...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+
+            html2canvas(targetEl, {
+                backgroundColor: "#0b0b0b", scale: 2, logging: false, useCORS: true
+            }).then(canvas => {
                 canvas.toBlob(blob => {
-                    navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-                    alert('Screenshot copied to clipboard!');
+                    if (!blob) { resetBtn(btn, originalText); alert("Error"); return; }
+                    try {
+                        const item = new ClipboardItem({ "image/png": blob });
+                        navigator.clipboard.write([item]).then(() => { resetBtn(btn, originalText); })
+                        .catch(err => { triggerDownload(canvas); resetBtn(btn, originalText); });
+                    } catch (e) { triggerDownload(canvas); resetBtn(btn, originalText); }
                 });
-            } catch (err) {
-                console.error(err);
-                alert('Screenshot failed.');
-            }
+            }).catch(err => { console.error(err); resetBtn(btn, originalText); });
+        }
+        function triggerDownload(canvas) {
+            const link = document.createElement('a');
+            const now = new Date();
+            const timeStr = now.toISOString().slice(0, 19).replace(/[-T:]/g, "");
+            link.download = `ShadowRacing_${timeStr}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+        function resetBtn(btn, originalText) {
+            btn.innerText = originalText; btn.style.opacity = "1"; btn.disabled = false;
         }
 
-        // AI 核心算法：檢查是否能通往邊界 (後路檢測)
-        function checkEscapeRoute(startX, startY, currentSnakeId) {
-            if (startX === 0 || startX === GRID_W - 1 || startY === 0 || startY === GRID_H - 1) return true;
-            
-            let visited = new Set();
-            let queue = [{ x: startX, y: startY }];
-            visited.add(`${startX},${startY}`);
-
-            snakes.forEach(s => {
-                s.body.forEach(b => { visited.add(`${b.x},${b.y}`); });
-            });
-
-            let searchLimit = 400; 
-            let count = 0;
-            const directions = [{ x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }];
-
-            while (queue.length > 0) {
-                let curr = queue.shift();
-                count++;
-                if (count > searchLimit) return true;
-
-                for (let dir of directions) {
-                    let nx = curr.x + dir.x;
-                    let ny = curr.y + dir.y;
-                    
-                    if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return true; // 邊界即自由
-                    if (!visited.has(`${nx},${ny}`)) {
-                        visited.add(`${nx},${ny}`);
-                        queue.push({ x: nx, y: ny });
-                    }
-                }
-            }
-            return false;
-        }
-
-        // --- Controls ---
         window.addEventListener('keydown', e => {
-            let isStartScreen = !document.getElementById('start-content').classList.contains('hidden');
             let isEndScreen = !document.getElementById('end-content').classList.contains('hidden');
-
+            let isStartScreen = !document.getElementById('start-content').classList.contains('hidden');
+            if (document.activeElement.tagName === "INPUT") return;
             if (isStartScreen && e.key === 'Enter') { startGame(); return; }
             if (isEndScreen && (e.key === 'r' || e.key === 'R')) { location.reload(); return; }
-
             if (!isGameOver && !isStartScreen) {
                 // P1
                 if (!snakes[0].isAI) {
@@ -2039,22 +1964,7 @@
             }
         });
 
-        // Toggle Leaderboard on Map Change
-        document.querySelectorAll('input[name="map_mode"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const lbStart = document.getElementById('leaderboard-section-start');
-                if (e.target.value === 'fixed') {
-                    lbStart.classList.remove('hidden');
-                    renderLeaderboard();
-                } else {
-                    lbStart.classList.add('hidden');
-                }
-            });
-        });
-
-        // Initialize Leaderboard on load
-        renderLeaderboard();
-
+        window.addEventListener('resize', () => { if (!isGameOver) resize(); });
     </script>
 </body>
 </html>
