@@ -352,8 +352,20 @@
         }
 
         #start-content .content-box {
-            max-width: 950px;
+            max-width: 96%;
             margin-bottom: 20px;
+        }
+
+        /* Leaderboard box on start screen */
+        #start-leaderboard-container {
+            max-width: 96%;
+            width: 100%;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px 40px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-sizing: border-box;
         }
 
         .rule-title {
@@ -534,7 +546,7 @@
         /* --- CHART & ANALYSIS --- */
         #chart-container {
             width: 100%;
-            height: 400px;
+            height: 600px;
             margin-top: 30px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid #333;
@@ -544,7 +556,6 @@
         }
         #chartCanvas { width: 100%; height: 100%; }
 
-        /* Segment Table Styles */
         #segment-analysis, #leaderboard-section {
             width: 100%;
             margin-top: 40px;
@@ -737,7 +748,61 @@
                 </div>
                 <div style="text-align:center"><button class="btn" onclick="startGame()">START GAME (Enter)</button>
                 </div>
-            </div>
+
+                <div id="start-leaderboard-container">
+                    <div class="section-title">
+                        30x12 模式排行榜 (TOP 10) 
+                        <button onclick="clearLeaderboard()" class="btn-red-sm">🗑️ 清除記錄</button>
+                    </div>
+                    <div class="lb-container">
+                        <div class="lb-box">
+                            <div class="lb-header pvp">⚔️ PvP (人人)</div>
+                            <table class="lb-table">
+                                <thead>
+                                    <tr>
+                                        <th class="lb-rank">#</th>
+                                        <th class="lb-name">Name</th>
+                                        <th>Total</th>
+                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
+                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="start-lb-pvp-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="lb-box">
+                            <div class="lb-header pve">🤖 PvE (人機)</div>
+                            <table class="lb-table">
+                                <thead>
+                                    <tr>
+                                        <th class="lb-rank">#</th>
+                                        <th class="lb-name">Name</th>
+                                        <th>Total</th>
+                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
+                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="start-lb-pve-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="lb-box">
+                            <div class="lb-header aivai">💻 AIvAI (機機)</div>
+                            <table class="lb-table">
+                                <thead>
+                                    <tr>
+                                        <th class="lb-rank">#</th>
+                                        <th class="lb-name">Name</th>
+                                        <th>Total</th>
+                                        <th title="0-15s">S1</th><th title="15-30s">S2</th><th title="30-45s">S3</th>
+                                        <th title="45-60s">S4</th><th title="60-75s">S5</th><th title="75-90s">S6</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="start-lb-aivai-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
 
             <div id="end-content" class="hidden">
                 <div id="capture-target">
@@ -962,47 +1027,29 @@
                 this.nextDir = { x: newX, y: newY }; this.dir = { x: newX, y: newY };
             }
           thinkAI() {
-                // 0. 有技能就放 (修復之前的被動問題)
                 this.tryAutoCastSkill();
-
                 const head = this.body[0];
                 let radiusGrid = VISION_BASE_DIST + (this.level - 1) * VISION_PER_LV_DIST;
                 if (this.blindTimer > 0) radiusGrid *= BLIND_FACTOR;
-
-                // 1. 找出所有「基礎安全」的移動方向 (不撞牆、不撞蛇)
                 const moves = [{ x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }];
                 let validMoves = moves.filter(m => {
-                    // 禁止回頭
                     if (m.x === -this.dir.x && m.y === -this.dir.y) return false;
                     
                     const nx = head.x + m.x; 
                     const ny = head.y + m.y;
-                    
-                    // 撞牆檢查
-                    if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return false;
-                    
-                    // 撞蛇檢查 (檢查所有蛇的身體)
-                    // 注意：這裡簡單判斷，如果預測到對手下個頭的位置可能會撞，最好也避開，這裡先只避開身體
-                    let collision = snakes.some(s => s.body.some(b => b.x === nx && b.y === ny));
-                    if (collision) return false;
-
+                                        if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) return false;
+            let collision = snakes.some(s => {
+                if (s.id !== this.id) return false;
+                return s.body.some(b => b.x === nx && b.y === ny);
+            });
+            if (collision) return false;
                     return true;
                 });
-
-                // 如果無路可走，就隨便選一個死掉 (避免報錯)
                 if (validMoves.length === 0) return;
-
-                // 2.【核心進化】過濾出「有後路」的移動方向
-                // 只有當移動後的位置，可以通過 BFS 找到地圖邊界，才算是「真·安全」
                 let safeEscapeMoves = validMoves.filter(m => {
                     return checkEscapeRoute(head.x + m.x, head.y + m.y, this.id);
                 });
-
-                // 如果經過過濾還有路，就只考慮這些有後路的方向；
-                // 如果過濾完發現全是死路 (被完全包圍)，那只能從基礎安全步裡選(盡量拖時間)
                 let candidateMoves = safeEscapeMoves.length > 0 ? safeEscapeMoves : validMoves;
-
-                // 3. 尋找視野內的道具
                 let visibleItems = items.filter(it => {
                     let dx = it.x - head.x; let dy = it.y - head.y;
                     return Math.sqrt(dx * dx + dy * dy) <= radiusGrid;
@@ -1010,37 +1057,26 @@
 
                 let bestMove = null;
                 let maxScore = -99999;
-
-                // 如果視野內有道具，評估哪個方向最好
                 if (visibleItems.length > 0) {
-                    // 為每個候選移動打分
                     candidateMoves.forEach(move => {
                         let nx = head.x + move.x;
                         let ny = head.y + move.y;
                         let score = 0;
-
-                        // 判斷此移動是否直接吃到東西
                         let directItem = visibleItems.find(it => it.x === nx && it.y === ny);
                         if (directItem) {
-                            if (directItem.def.type === 'buffE') score += 5000; // E 道具優先級最高
+                            if (directItem.def.type === 'buffE') score += 5000;
                             else if (directItem.def.type === 'xp99') score += 1000;
                             else if (directItem.def.type === 'xp') score += directItem.def.val;
                             else score += 50;
                         } else {
-                            // 沒直接吃到，但靠近了高價值目標嗎？
-                            // 找視野內價值最高的東西
                             let target = visibleItems.reduce((prev, curr) => {
                                 let wPrev = (prev.def.type === 'buffE' ? 1000 : prev.def.val);
                                 let wCurr = (curr.def.type === 'buffE' ? 1000 : curr.def.val);
                                 return wCurr > wPrev ? curr : prev;
                             });
-                            
-                            // 計算移動後距離目標的距離
-                            let distAfterMove = Math.abs(nx - target.x) + Math.abs(ny - target.y);
+                                                        let distAfterMove = Math.abs(nx - target.x) + Math.abs(ny - target.y);
                             let currentDist = Math.abs(head.x - target.x) + Math.abs(head.y - target.y);
-                            
-                            // 如果靠近了目標，加分
-                            if (distAfterMove < currentDist) {
+                                                        if (distAfterMove < currentDist) {
                                 score += (target.def.type === 'buffE' ? 200 : 20);
                             }
                         }
@@ -1051,20 +1087,14 @@
                         }
                     });
                 }
-
-                // 4. 決策執行
                 if (bestMove) {
                     this.nextDir = bestMove;
                 } else {
-                    // 視野內沒東西，或者分數都一樣
-                    // 優先繼續直走 (看起來比較自然)，除非直走不安全或沒後路
                     let forwardMove = candidateMoves.find(m => m.x === this.dir.x && m.y === this.dir.y);
                     if (forwardMove) {
-                        // 稍微加一點隨機轉向，避免它一直直走撞牆
                         if (Math.random() > 0.1) this.nextDir = forwardMove;
                         else this.nextDir = candidateMoves[Math.floor(Math.random() * candidateMoves.length)];
                     } else {
-                        // 不能直走，隨機選一個安全的
                         this.nextDir = candidateMoves[Math.floor(Math.random() * candidateMoves.length)];
                     }
                 }
@@ -1647,8 +1677,12 @@
         }
 
         function renderLeaderboard() {
+            // Updated to support multiple targets (Start Screen & End Screen)
+            
             function fillTable(tbodyId, type) {
                 const tbody = document.getElementById(tbodyId);
+                if(!tbody) return; // Guard clause
+                
                 tbody.innerHTML = '';
                 let dbKey = 'sr_lb_' + type;
                 let raw = localStorage.getItem(dbKey);
@@ -1680,9 +1714,15 @@
                 });
             }
 
+            // Fill End Screen Tables
             fillTable('lb-pvp-body', 'pvp');
             fillTable('lb-pve-body', 'pve');
             fillTable('lb-aivai-body', 'aivai');
+
+            // Fill Start Screen Tables (New IDs)
+            fillTable('start-lb-pvp-body', 'pvp');
+            fillTable('start-lb-pve-body', 'pve');
+            fillTable('start-lb-aivai-body', 'aivai');
         }
 
         function showEndScreen(wId, reason, s1, s2, p1Segs, p2Segs) {
@@ -1777,8 +1817,6 @@
             }
             segHtml += `</tbody>`;
             segTable.innerHTML = segHtml;
-
-            // --- 渲染排行榜 (30x12) ---
             const lbSection = document.getElementById('leaderboard-section');
             if (MAP_MODE === 'fixed') {
                 lbSection.classList.remove('hidden');
@@ -1965,6 +2003,9 @@ function checkEscapeRoute(startX, startY, currentSnakeId) {
         });
 
         window.addEventListener('resize', () => { if (!isGameOver) resize(); });
+
+        // Initialize Start Screen Leaderboard
+        renderLeaderboard();
     </script>
 </body>
 </html>
